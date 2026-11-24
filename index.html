@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campus Análisis I</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: aula de estudio, claro y paciente, foco en el razonamiento
+   IDEA: pizarrón azul de facultad + cuaderno de práctica
+   PICTURE: el enunciado del ejercicio y su resolución paso a paso son el centro
+   COLOUR and TYPE: azul profundo, tinta blanca, acento celeste tiza; Source Serif para títulos, Inter para texto
+   LAYOUT: barra lateral con parciales, columna de lectura con tarjetas de ejercicio */
+:root{color-scheme:dark;--bg:#0a2463;--bg2:#0d2d78;--card:#123788;--line:rgba(255,255,255,.18);--ink:#ffffff;--soft:#d6e2ff;--acc:#8fd3ff;--ok:#9ff0c0;--warn:#ffe08a}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif;overflow-x:clip}
+a{color:var(--acc)}
+header{background:linear-gradient(180deg,#081d50,#0a2463);border-bottom:1px solid var(--line);padding:22px max(4vw,16px) 18px}
+header h1{font:700 clamp(26px,3.6vw,40px)/1.1 "Source Serif 4",Georgia,serif;margin:0 0 6px;text-wrap:balance}
+header p{margin:0;color:var(--soft);max-width:70ch}
+.wrap{display:grid;grid-template-columns:290px minmax(0,1fr);max-width:1320px;margin:0 auto}
+nav{border-right:1px solid var(--line);padding:18px 14px 40px;position:sticky;top:0;align-self:start;max-height:100vh;overflow-y:auto}
+nav h3{font:600 13px/1.3 Inter,sans-serif;color:var(--acc);margin:18px 8px 6px}
+nav button{display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;background:none;border:0;color:var(--ink);font:500 15px/1.35 Inter,sans-serif;padding:10px 10px;border-radius:8px;cursor:pointer;min-height:44px;align-items:center}
+nav button:hover{background:rgba(255,255,255,.08)}
+nav button.on{background:var(--card);box-shadow:inset 3px 0 0 var(--acc)}
+nav .cnt{font-size:13px;color:var(--soft);white-space:nowrap}
+main{padding:24px max(3.5vw,16px) 80px}
+.exhead h2{font:700 clamp(26px,3vw,36px)/1.15 "Source Serif 4",Georgia,serif;margin:0 0 4px}
+.meta{color:var(--soft);margin:0 0 6px}
+.rule{display:inline-block;border:1px solid var(--warn);color:var(--warn);border-radius:6px;padding:3px 10px;font-size:14px;margin:6px 0 14px}
+.prog{height:8px;background:rgba(255,255,255,.12);border-radius:5px;overflow:hidden;margin:8px 0 22px;max-width:520px}
+.prog i{display:block;height:100%;background:var(--ok);width:0;transition:width .4s}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:20px clamp(14px,2.4vw,28px);margin:0 0 20px}
+.card h3{font:700 20px/1.3 "Source Serif 4",Georgia,serif;margin:0 0 10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tag{font:600 12px/1 Inter,sans-serif;background:rgba(143,211,255,.16);color:var(--acc);padding:6px 9px;border-radius:20px}
+.done .tag.st{background:rgba(159,240,192,.18);color:var(--ok)}
+.enun{font-size:17px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 4px}
+.b{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;font:600 15px/1 Inter,sans-serif;padding:12px 16px;min-height:44px;cursor:pointer}
+.b:hover{border-color:var(--acc)}
+.b.pri{background:#fff;color:#0a2463;border-color:#fff}
+.b:focus-visible,nav button:focus-visible,textarea:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.panel{margin-top:14px;border-top:1px dashed var(--line);padding-top:14px}
+textarea{width:100%;min-height:150px;background:#081d50;color:#fff;border:1px solid var(--line);border-radius:9px;padding:12px;font:16px/1.5 Inter,sans-serif;resize:vertical}
+.hint{background:rgba(255,224,138,.1);border-left:3px solid var(--warn);padding:10px 14px;border-radius:6px;margin:10px 0}
+.res{background:rgba(159,240,192,.1);border-left:3px solid var(--ok);padding:10px 14px;border-radius:6px;margin:10px 0}
+ol.steps{padding-left:0;list-style:none;counter-reset:s;margin:0}
+ol.steps li{counter-increment:s;position:relative;padding:12px 0 12px 46px;border-bottom:1px solid var(--line)}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:12px;width:32px;height:32px;border-radius:50%;background:#fff;color:#0a2463;font:700 15px/32px Inter,sans-serif;text-align:center}
+ol.steps li.hid{display:none}
+.mj{overflow-x:auto;overflow-y:hidden}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+.gen h4{font:700 18px/1.3 "Source Serif 4",Georgia,serif;margin:18px 0 6px;color:var(--acc)}
+.gen ul{margin:6px 0;padding-left:22px}
+.gen li{margin:4px 0}
+.tip{background:rgba(255,255,255,.06);border-radius:8px;padding:10px 14px;margin:10px 0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.home .tile{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;text-align:left;color:#fff;font:inherit;min-height:44px}
+.home .tile:hover{border-color:var(--acc)}
+.home .tile b{display:block;font:700 18px/1.3 "Source Serif 4",serif}
+.home .tile span{color:var(--soft);font-size:14px}
+.menu{display:none}
+@media(max-width:860px){.wrap{grid-template-columns:1fr}nav{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--line);display:none}nav.open{display:block}.menu{display:inline-block;margin-top:12px}}
+@media(max-width:600px){mjx-container:not([display]){display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle}}
+@media(prefers-reduced-motion:reduce){.prog i{transition:none}}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{sen:'\\operatorname{sen}',arctg:'\\operatorname{arctg}',arcsen:'\\operatorname{arcsen}',senh:'\\operatorname{senh}',sgn:'\\operatorname{sgn}',Ch:'\\operatorname{Ch}',tg:'\\operatorname{tg}'}},svg:{fontCache:'global'},startup:{typeset:false}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" async id="mjs"></script>
+</head>
+<body>
+<header>
+  <h1>Campus de práctica · Análisis Matemático I (ITBA)</h1>
+  <p>18 parciales reales (primeros, recuperatorios y segundos) más un modelo genérico. En cada ejercicio podés resolverlo vos con pistas y control de resultado, o ver la solución paso a paso.</p>
+  <button class="b menu" id="menuBtn" aria-expanded="false">Ver lista de parciales</button>
+</header>
+<div class="wrap">
+  <nav id="nav" aria-label="Parciales"></nav>
+  <main id="main"></main>
+</div>
+<script>
+const R=String.raw;
+const NOL="No se permite L'Hôpital en el cálculo de límites";
+const SIL="Se permite L'Hôpital salvo donde se indique lo contrario";
+const MODELO={id:'modelo',corto:'Modelo de parcial genérico',titulo:'Modelo de parcial genérico: cómo se encara cada punto',fecha:'Guía de método · 1er y 2do parcial',
+intro:R`
+<div class="card">
+<p>Todos los parciales de esta materia siguen el mismo esqueleto: <b>5 ejercicios</b>, cada uno de un tema distinto. Si reconocés el tipo de ejercicio, ya sabés el 70% de la resolución. Esta guía te muestra los 10 tipos que se repiten (5 del primer parcial y 5 del segundo), qué hay que hacer en cada uno y cómo escribirlo prolijo para no perder puntos. Abajo tenés un ejercicio modelo de cada tipo, resuelto paso a paso.</p>
+<h4>Primer parcial: los 5 tipos que siempre aparecen</h4>
+<ul>
+<li><b>Límite del tipo \(1^\infty\)</b> (casi siempre sin L'Hôpital). Se reconoce porque la base tiende a 1 y el exponente a \(\pm\infty\). Herramienta: \(\lim f^{g}=e^{\lim (f-1)\,g}\) y los límites notables \(\frac{\sen u}{u}\to1\), \(\frac{\ln(1+u)}{u}\to1\), \(\frac{e^u-1}{u}\to1\), \(\frac{1-\cos u}{u^2}\to\frac12\).</li>
+<li><b>Continuidad y clasificación de discontinuidades.</b> Buscar dominio, marcar los puntos problemáticos y calcular límites laterales en cada uno.</li>
+<li><b>Derivación implícita</b>: hallar \(f(0)\) reemplazando, derivar la ecuación respecto de \(x\), despejar \(f'(0)\) y armar recta tangente, normal o aproximación lineal.</li>
+<li><b>Derivabilidad</b> de funciones partidas, con módulo o con \(\lfloor x\rfloor\): en los puntos de pegado se calcula la derivada por definición (cociente incremental), con límites laterales.</li>
+<li><b>Teoremas</b> (Bolzano, Rolle, Lagrange): contar raíces, probar que dos gráficos se cortan o probar desigualdades.</li>
+</ul>
+<h4>Segundo parcial: los 5 tipos que siempre aparecen</h4>
+<ul>
+<li><b>Estudio completo de función</b>: dominio, asíntotas, \(f'\) (crecimiento y extremos), \(f''\) (concavidad e inflexión), gráfico e imagen.</li>
+<li><b>Taylor con resto de Lagrange</b>: aproximar un valor, acotar el error y decidir si es por exceso o por defecto según el signo del resto.</li>
+<li><b>Primitivas</b>: fracciones simples, sustitución, partes, completar cuadrados.</li>
+<li><b>Teorema fundamental del cálculo</b>: derivar funciones definidas por integrales (con regla de la cadena) y usarlo en límites o en crecimiento.</li>
+<li><b>Áreas entre curvas</b>: graficar, hallar intersecciones, decidir qué curva está arriba (o a la derecha) e integrar.</li>
+</ul>
+<h4>Cómo escribirlo prolijo (lo que mira el corrector)</h4>
+<ul>
+<li>Empezá cada ejercicio diciendo el <b>dominio</b> o los datos que vas a usar.</li>
+<li><b>Nombrá el teorema</b> antes de usarlo y verificá sus hipótesis en voz alta: «\(f\) es continua en \([a,b]\) por ser composición de continuas, entonces por Bolzano…».</li>
+<li>En límites, escribí la indeterminación que aparece (\(1^\infty\), \(0/0\), \(\infty/\infty\)) y qué límite notable usás en cada paso.</li>
+<li>En derivabilidad, nunca derives la fórmula del tramo en el punto de pegado: usá el <b>cociente incremental</b> con límites laterales.</li>
+<li>Cerrá cada ejercicio con una <b>respuesta en una oración</b>: «El límite vale \(e^{1/2}\)», «\(x=2\) es una discontinuidad de salto».</li>
+<li>En Taylor, dejá escrito el resto de Lagrange con el \(c\) entre el centro y el punto, y la cota numérica.</li>
+</ul>
+<div class="tip"><b>Clasificación de discontinuidades usada en ITBA:</b> <i>evitable</i> si existe el límite finito (y \(f\) no está definida o vale otra cosa); <i>esencial de 1ra especie (salto)</i> si los laterales son finitos y distintos; <i>esencial de 2da especie</i> si algún lateral es infinito o no existe.</div>
+</div>`,
+ejercicios:[
+{tema:'1er parcial · Límite 1^∞',
+enun:R`Analice la existencia de \[\lim_{x\to+\infty}\left(\frac{x^2+3x}{x^2+1}\right)^{x}.\]`,
+pista:R`Fijate qué pasa con la base y con el exponente por separado. Si da \(1^\infty\), usá \(e^{\lim (\text{base}-1)\cdot \text{exponente}}\).`,
+res:R`\(e^{3}\)`,
+pasos:[R`<b>Reconocer la forma.</b> La base \(\frac{x^2+3x}{x^2+1}\to1\) (cociente de polinomios de igual grado, coeficientes principales iguales) y el exponente \(x\to+\infty\): es una indeterminación \(1^\infty\).`,
+R`<b>Herramienta.</b> Si \(f\to1\) y \(g\to\infty\), entonces \(f^g=\left[(1+(f-1))^{\frac{1}{f-1}}\right]^{(f-1)g}\). El corchete tiende a \(e\), así que el límite es \(e^{L}\) con \(L=\lim (f-1)\,g\).`,
+R`<b>Calcular \(f-1\).</b> \[\frac{x^2+3x}{x^2+1}-1=\frac{3x-1}{x^2+1}.\]`,
+R`<b>Calcular L.</b> \[L=\lim_{x\to\infty}\frac{(3x-1)\,x}{x^2+1}=\lim_{x\to\infty}\frac{3x^2-x}{x^2+1}=3.\]`,
+R`<b>Respuesta.</b> El límite existe y vale \(e^{3}\). Para la redacción: dejá escrito explícitamente que \((1+u)^{1/u}\to e\) cuando \(u\to0\).`]},
+{tema:'1er parcial · Continuidad',
+enun:R`Indique dónde es continua \(f\) y clasifique sus discontinuidades: \[f(x)=\frac{x^2-1}{x^2-x}+\arctg\left(\frac{1}{x-2}\right).\]`,
+pista:R`Primero el dominio: anulá denominadores. Después calculá límites laterales en cada punto que quedó afuera.`,
+res:R`Continua en \(\mathbb R-\{0,1,2\}\). En \(x=1\): evitable (límite \(2-\pi/4\)). En \(x=0\): esencial de 2da especie (infinita). En \(x=2\): salto.`,
+pasos:[R`<b>Dominio.</b> \(x^2-x=x(x-1)\neq0\) y \(x\neq2\). Dom \(f=\mathbb R-\{0,1,2\}\). En el dominio \(f\) es continua por ser suma, cociente y composición de funciones continuas.`,
+R`<b>Simplificar.</b> \(\frac{x^2-1}{x(x-1)}=\frac{(x-1)(x+1)}{x(x-1)}=\frac{x+1}{x}\) para \(x\neq1\).`,
+R`<b>En \(x=1\).</b> \(\lim_{x\to1}\left(\frac{x+1}{x}+\arctg\frac1{x-2}\right)=2+\arctg(-1)=2-\frac\pi4\). Límite finito: <b>discontinuidad evitable</b>.`,
+R`<b>En \(x=0\).</b> \(\frac{x+1}{x}\to\pm\infty\) (por derecha \(+\infty\), por izquierda \(-\infty\)) y el arctg tiende a \(\arctg(-\tfrac12)\), finito. <b>Esencial de 2da especie</b> (asíntota vertical).`,
+R`<b>En \(x=2\).</b> \(\frac1{x-2}\to+\infty\) por derecha y \(-\infty\) por izquierda, así que \(\arctg\to\pm\frac\pi2\). Laterales: \(\frac32+\frac\pi2\) y \(\frac32-\frac\pi2\), finitos y distintos: <b>salto</b> (esencial de 1ra especie).`]},
+{tema:'1er parcial · Derivada implícita',
+enun:R`Sea \(y=f(x)\) derivable cerca de 0 que cumple \(x^2+y^3-xy=1\). Halle las rectas tangente y normal en \((0,f(0))\) y aproxime \(f(0{,}03)\).`,
+pista:R`Reemplazá \(x=0\) para obtener \(f(0)\). Después derivá toda la igualdad respecto de \(x\), recordando que \(y\) depende de \(x\).`,
+res:R`\(f(0)=1\), \(f'(0)=\tfrac13\). Tangente \(y=1+\tfrac x3\); normal \(y=1-3x\); \(f(0{,}03)\approx1{,}01\).`,
+pasos:[R`<b>Hallar \(f(0)\).</b> Con \(x=0\): \(y^3=1\Rightarrow y=1\). Si hubiera varias soluciones, el enunciado da un dato (\(f(0)>0\), etc.) para elegir.`,
+R`<b>Derivar respecto de \(x\).</b> \[2x+3y^2y'-(y+xy')=0.\] Ojo: \(xy\) se deriva con la regla del producto y \(y^3\) con la regla de la cadena.`,
+R`<b>Evaluar en \((0,1)\).</b> \(0+3y'-1-0=0\Rightarrow f'(0)=\tfrac13\).`,
+R`<b>Rectas.</b> Tangente: \(y=f(0)+f'(0)(x-0)=1+\tfrac13x\). Normal (pendiente \(-1/f'(0)\)): \(y=1-3x\).`,
+R`<b>Aproximación lineal.</b> \(f(x)\approx f(0)+f'(0)x\), entonces \(f(0{,}03)\approx1+\tfrac{0{,}03}{3}=1{,}01\).`]},
+{tema:'1er parcial · Derivabilidad',
+enun:R`Determine dónde es derivable \(f(x)=|x^2-1|\,\sen(\pi x)\) y calcule \(f'(1)\).`,
+pista:R`Lejos de los ceros del módulo la función es producto de derivables. En \(x=\pm1\) usá el cociente incremental.`,
+res:R`\(f\) es derivable en todo \(\mathbb R\); \(f'(1)=0\) (y también \(f'(-1)=0\)).`,
+pasos:[R`<b>Puntos sospechosos.</b> \(|u|\) no es derivable donde \(u=0\): \(x^2-1=0\Rightarrow x=\pm1\). En el resto \(f\) es producto de funciones derivables.`,
+R`<b>Cociente incremental en \(x=1\).</b> \(f(1)=0\): \[\lim_{x\to1}\frac{f(x)-f(1)}{x-1}=\lim_{x\to1}\frac{|x-1|\,|x+1|\,\sen(\pi x)}{x-1}.\]`,
+R`<b>Analizar.</b> \(\frac{|x-1|}{x-1}=\pm1\) (acotado), \(|x+1|\to2\) y \(\sen(\pi x)\to\sen\pi=0\). Acotado por algo que tiende a 0: el límite es 0.`,
+R`<b>Conclusión.</b> \(f'(1)=0\). Lo mismo pasa en \(x=-1\) porque \(\sen(-\pi)=0\). <b>Idea clave:</b> el módulo "rompe" la derivabilidad solo si el otro factor no se anula en ese punto.`]},
+{tema:'1er parcial · Bolzano y Rolle',
+enun:R`Pruebe que \(x^5+3x-1=0\) tiene exactamente una solución real.`,
+pista:R`Existencia con Bolzano (buscá un cambio de signo). Unicidad con Rolle o con monotonía (\(f'>0\)).`,
+res:R`Exactamente una raíz, en \((0,1)\).`,
+pasos:[R`<b>Existencia.</b> \(f(x)=x^5+3x-1\) es continua en \(\mathbb R\) (polinomio). \(f(0)=-1<0\) y \(f(1)=3>0\). Por <b>Bolzano</b> existe \(c\in(0,1)\) con \(f(c)=0\).`,
+R`<b>Unicidad.</b> \(f'(x)=5x^4+3>0\) para todo \(x\): \(f\) es estrictamente creciente, por lo tanto inyectiva.`,
+R`<b>Versión con Rolle.</b> Si hubiera dos raíces \(a<b\), por Rolle existiría \(\xi\in(a,b)\) con \(f'(\xi)=0\), absurdo.`,
+R`<b>Respuesta.</b> La ecuación tiene exactamente una solución real. Para contar \(n\) raíces: Rolle dice que entre dos raíces de \(f\) hay una de \(f'\); si \(f'\) tiene \(k\) ceros, \(f\) tiene a lo sumo \(k+1\).`]},
+{tema:'2do parcial · Estudio de función',
+enun:R`Estudie \(f(x)=x\,e^{-x}\): asíntotas, crecimiento, extremos, concavidad, gráfico e imagen.`,
+pista:R`Orden: dominio → asíntotas → \(f'\) y tabla de signos → \(f''\) y tabla de signos → gráfico → imagen.`,
+res:R`AH \(y=0\) en \(+\infty\). Crece en \((-\infty,1)\), decrece en \((1,\infty)\); máximo \((1,1/e)\). Inflexión en \((2,2/e^2)\). Imagen \((-\infty,1/e]\).`,
+pasos:[R`<b>Dominio y asíntotas.</b> Dom \(=\mathbb R\): no hay asíntotas verticales. \(\lim_{x\to+\infty}xe^{-x}=0\): asíntota horizontal \(y=0\) en \(+\infty\). En \(-\infty\), \(f\to-\infty\) y \(f/x=e^{-x}\to\infty\): no hay oblicua.`,
+R`<b>Primera derivada.</b> \(f'(x)=e^{-x}(1-x)\). Como \(e^{-x}>0\), el signo es el de \(1-x\): crece en \((-\infty,1)\), decrece en \((1,\infty)\). Máximo en \(x=1\): \(f(1)=1/e\).`,
+R`<b>Segunda derivada.</b> \(f''(x)=e^{-x}(x-2)\): cóncava hacia abajo en \((-\infty,2)\), hacia arriba en \((2,\infty)\). Inflexión en \((2,2e^{-2})\).`,
+R`<b>Gráfico.</b> Pasa por \((0,0)\), sube hasta \((1,1/e)\), baja acercándose a \(y=0\) por arriba, cambiando la curvatura en \(x=2\).`,
+R`<b>Imagen.</b> Por continuidad y los límites: \(\text{Im}f=(-\infty,1/e]\).`]},
+{tema:'2do parcial · Taylor',
+enun:R`Aproxime \(e^{0{,}2}\) con error menor que \(10^{-3}\) usando un polinomio de Taylor adecuado. ¿Es por exceso o por defecto? (Use \(e<3\).)`,
+pista:R`Mac Laurin de \(e^x\). Resto de Lagrange: \(R_n=\frac{e^c}{(n+1)!}x^{n+1}\) con \(c\in(0;0{,}2)\). Acotá \(e^c<3\) y buscá el menor \(n\).`,
+res:R`\(n=3\): \(e^{0{,}2}\approx1{,}22133\), por defecto (el resto es positivo).`,
+pasos:[R`<b>Resto.</b> \(e^{x}=P_n(x)+R_n(x)\), \(R_n(x)=\dfrac{e^{c}}{(n+1)!}x^{n+1}\), \(c\) entre 0 y 0,2.`,
+R`<b>Cota.</b> \(|R_n|<\dfrac{3\cdot0{,}2^{n+1}}{(n+1)!}\). \(n=2\): \(3\cdot0{,}008/6=0{,}004\) (no alcanza). \(n=3\): \(3\cdot0{,}0016/24=0{,}0002<10^{-3}\) ✓.`,
+R`<b>Aproximación.</b> \(P_3(0{,}2)=1+0{,}2+\frac{0{,}04}{2}+\frac{0{,}008}{6}=1{,}221\overline{3}\).`,
+R`<b>Exceso o defecto.</b> \(R_3=\frac{e^c}{24}(0{,}2)^4>0\Rightarrow e^{0{,}2}=P_3+R_3>P_3\): la aproximación es <b>por defecto</b>.`]},
+{tema:'2do parcial · Primitivas',
+enun:R`Calcule \(\displaystyle\int\left[\frac{x+3}{x^2-x-2}+x\,e^{x}\right]dx\).`,
+pista:R`Separá en dos integrales. La racional: factorizá el denominador y usá fracciones simples. La otra: partes con \(u=x\).`,
+res:R`\(\tfrac53\ln|x-2|-\tfrac23\ln|x+1|+(x-1)e^x+C\)`,
+pasos:[R`<b>Fracciones simples.</b> \(x^2-x-2=(x-2)(x+1)\). \(\frac{x+3}{(x-2)(x+1)}=\frac{A}{x-2}+\frac{B}{x+1}\). Tapando: \(A=\frac{5}{3}\), \(B=\frac{2}{-3}=-\frac23\).`,
+R`<b>Integrar.</b> \(\int\frac{x+3}{x^2-x-2}dx=\frac53\ln|x-2|-\frac23\ln|x+1|\).`,
+R`<b>Partes.</b> \(u=x,\ dv=e^xdx\Rightarrow\int xe^x dx=xe^x-\int e^xdx=(x-1)e^x\).`,
+R`<b>Resultado y control.</b> Sumar y agregar \(+C\). Siempre podés verificar derivando el resultado.`]},
+{tema:'2do parcial · TFC',
+enun:R`Sea \(F(x)=\displaystyle\int_0^{x^2}e^{-t^2}dt\). Justifique que es derivable, halle \(F'\) y calcule \(\displaystyle\lim_{x\to0}\frac{F(x)}{x^2}\).`,
+pista:R`TFC + regla de la cadena: \(\frac{d}{dx}\int_a^{u(x)}g=g(u(x))\,u'(x)\).`,
+res:R`\(F'(x)=2xe^{-x^4}\); el límite vale 1.`,
+pasos:[R`<b>Hipótesis.</b> \(g(t)=e^{-t^2}\) es continua en \(\mathbb R\): por el TFC \(G(u)=\int_0^u g\) es derivable con \(G'=g\). \(F=G\circ u\) con \(u=x^2\) derivable.`,
+R`<b>Derivada.</b> \(F'(x)=e^{-(x^2)^2}\cdot2x=2xe^{-x^4}\).`,
+R`<b>Límite.</b> Es \(0/0\) (\(F(0)=0\)). Por L'Hôpital: \(\lim\frac{2xe^{-x^4}}{2x}=\lim e^{-x^4}=1\).`]},
+{tema:'2do parcial · Área',
+enun:R`Calcule el área de la región limitada por \(y=x^2\) e \(y=2-x\).`,
+pista:R`Igualá las curvas para encontrar los límites de integración y fijate cuál está arriba en un punto intermedio.`,
+res:R`\(\tfrac92\)`,
+pasos:[R`<b>Intersecciones.</b> \(x^2=2-x\Rightarrow x^2+x-2=0\Rightarrow x=-2,\ x=1\).`,
+R`<b>Quién está arriba.</b> En \(x=0\): recta \(2\), parábola \(0\). La recta está arriba en \([-2,1]\).`,
+R`<b>Integral.</b> \[A=\int_{-2}^{1}(2-x-x^2)\,dx=\left[2x-\tfrac{x^2}{2}-\tfrac{x^3}{3}\right]_{-2}^{1}=\tfrac76+\tfrac{10}{3}=\tfrac92.\]`,
+R`<b>Redacción.</b> Siempre hacé el gráfico aproximado y escribí \(A=\int(\text{arriba}-\text{abajo})\). Si la región cambia de "techo", partí la integral.`]}
+]};
+const E5BIY={tema:'Teoremas: Bolzano y Rolle',
+enun:R`Dada \(f(x)=x^4+2x^3+6x^2+12x-12\), demuestre: 1) \(f'\) es biyectiva; 2) \(f\) tiene exactamente dos raíces reales.`,
+pista:R`Mirá \(f''\): si es siempre positiva, \(f'\) es estrictamente creciente. Para la suryectividad, \(f'\) es un polinomio de grado impar. Después Bolzano + Rolle para \(f\).`,
+res:R`\(f''=12(x^2+x+1)>0\Rightarrow f'\) inyectiva; grado impar y continua \(\Rightarrow\) suryectiva. \(f\) tiene una raíz en \((-3,0)\) y otra en \((0,1)\), y no más.`,
+pasos:[R`<b>Derivadas.</b> \(f'(x)=4x^3+6x^2+12x+12\), \(f''(x)=12x^2+12x+12=12(x^2+x+1)\).`,
+R`<b>Inyectividad.</b> \(x^2+x+1\) tiene discriminante \(1-4<0\) y coeficiente principal positivo, así que \(f''>0\) en \(\mathbb R\). Entonces \(f'\) es estrictamente creciente, por lo tanto inyectiva.`,
+R`<b>Suryectividad.</b> \(f'\) es continua, \(\lim_{x\to-\infty}f'=-\infty\) y \(\lim_{x\to+\infty}f'=+\infty\). Por el teorema de los valores intermedios toma todo valor real. Luego \(f'\) es biyectiva.`,
+R`<b>A lo sumo dos raíces.</b> Como \(f'\) es biyectiva, se anula en un único punto. Si \(f\) tuviera tres raíces, por Rolle \(f'\) se anularía en dos puntos distintos: absurdo.`,
+R`<b>Al menos dos raíces (Bolzano).</b> \(f(-3)=81-54+54-36-12=33>0\), \(f(0)=-12<0\), \(f(1)=1+2+6+12-12=9>0\). \(f\) es continua, así que hay una raíz en \((-3,0)\) y otra en \((0,1)\).`,
+R`<b>Conclusión.</b> \(f\) tiene exactamente dos raíces reales.`]};
+const E4TG={tema:'Recta tangente por un punto exterior',
+enun:R`Encuentre los puntos del gráfico de \(f(x)=x^3-2x+2\) en los que la recta tangente pasa por \((0,0)\).`,
+pista:R`Escribí la tangente en un punto genérico \((a,f(a))\) e imponé que \((0,0)\) la verifique.`,
+res:R`Único punto \((1,1)\); la tangente es \(y=x\).`,
+pasos:[R`<b>Tangente genérica.</b> En \(x=a\): \(y=f(a)+f'(a)(x-a)\), con \(f'(a)=3a^2-2\).`,
+R`<b>Imponer \((0,0)\).</b> \(0=f(a)-a\,f'(a)=a^3-2a+2-a(3a^2-2)=-2a^3+2\).`,
+R`<b>Resolver.</b> \(a^3=1\Rightarrow a=1\) (única raíz real). \(f(1)=1\), \(f'(1)=1\).`,
+R`<b>Respuesta.</b> El único punto es \((1,1)\) y la recta tangente es \(y=x\).`]};
+const P1=[
+{id:'p1-2017-abr',corto:'1er parcial · abril 2017',titulo:'1er Parcial · 24 de abril de 2017',fecha:'Matemática 1 / Análisis I',regla:NOL,ejercicios:[
+{tema:'Límite 1^∞',enun:R`Analice la existencia de \[\lim_{x\to+\infty}\left(\frac{2x^2+\sqrt x}{2x^2-x}\right)^{x^2\sen(1/x)}.\]`,
+pista:R`Base \(\to1\), exponente \(\to\infty\). Ojo: \(x^2\sen(1/x)=x\cdot\frac{\sen(1/x)}{1/x}\).`,res:R`\(e^{1/2}\)`,
+pasos:[R`<b>Forma.</b> Base \(\to1\) (grados iguales, coeficientes principales 2 y 2). Exponente: \(x^2\sen\frac1x=x\cdot\frac{\sen(1/x)}{1/x}\to+\infty\) porque \(\frac{\sen u}{u}\to1\) con \(u=1/x\to0\). Es \(1^\infty\).`,
+R`<b>Base menos 1.</b> \(\frac{2x^2+\sqrt x}{2x^2-x}-1=\frac{\sqrt x+x}{2x^2-x}\).`,
+R`<b>Exponente del número e.</b> \[L=\lim_{x\to\infty}\frac{x+\sqrt x}{2x^2-x}\cdot x\cdot\frac{\sen(1/x)}{1/x}=\lim\frac{x^2+x\sqrt x}{2x^2-x}\cdot1=\frac12.\]`,
+R`<b>Respuesta.</b> El límite existe y vale \(e^{1/2}=\sqrt e\).`]},
+{tema:'Continuidad',enun:R`Sea \[f(x)=\frac{|x^3+x^2-x-1|}{x^2-x-2}+\frac{2^{1/x}+1}{3^{1/x}-1}.\] Indique dónde es continua y por qué. Clasifique sus discontinuidades.`,
+pista:R`Factorizá \(x^3+x^2-x-1=(x-1)(x+1)^2\) y \(x^2-x-2=(x-2)(x+1)\). En \(x=0\) analizá \(1/x\to\pm\infty\) por separado.`,
+res:R`Continua en \(\mathbb R-\{-1,0,2\}\). \(x=-1\): evitable (límite \(-9/4\)). \(x=0\): salto (\(-1/2\) por derecha, \(-3/2\) por izquierda). \(x=2\): esencial de 2da especie (infinita).`,
+pasos:[R`<b>Dominio.</b> \(x^2-x-2=(x-2)(x+1)\neq0\), \(x\neq0\) (por \(1/x\)), y \(3^{1/x}-1\neq0\) se cumple siempre que \(x\neq0\). Dom \(=\mathbb R-\{-1,0,2\}\), donde \(f\) es continua por álgebra y composición de continuas.`,
+R`<b>Factorizar.</b> \(x^3+x^2-x-1=(x^2-1)(x+1)=(x-1)(x+1)^2\). Entonces el primer sumando es \(\frac{|x-1|(x+1)^2}{(x-2)(x+1)}=\frac{|x-1|(x+1)}{x-2}\) para \(x\neq-1\).`,
+R`<b>\(x=-1\).</b> El primer sumando \(\to\frac{2\cdot0}{-3}=0\). El segundo es continuo en \(-1\): \(\frac{2^{-1}+1}{3^{-1}-1}=\frac{3/2}{-2/3}=-\frac94\). Límite \(-\frac94\): <b>evitable</b>.`,
+R`<b>\(x=2\).</b> Primer sumando: \(\frac{|x-1|(x+1)}{x-2}\to\frac{1\cdot3}{0^\pm}=\pm\infty\); el segundo es finito. <b>Esencial de 2da especie</b> (asíntota vertical).`,
+R`<b>\(x=0\) por derecha.</b> Primer sumando \(\to\frac{1\cdot1}{-2}=-\frac12\). Con \(t=1/x\to+\infty\): \(\frac{2^t+1}{3^t-1}=\frac{(2/3)^t+3^{-t}}{1-3^{-t}}\to0\). Total \(-\frac12\).`,
+R`<b>\(x=0\) por izquierda.</b> \(t\to-\infty\): \(2^t\to0,\ 3^t\to0\), el segundo sumando \(\to\frac{1}{-1}=-1\). Total \(-\frac32\). Laterales finitos y distintos: <b>salto</b>.`]},
+{tema:'Derivada implícita',enun:R`Sea \(f\) derivable cerca de 0 con \(y=f(x)\) que satisface \(3y^2\cos(xy)-e^{x^3y^2}-2y=2x\) y \(f(0)>0\). 1) Calcule \(f(0)\) y la recta normal en \((0,f(0))\). 2) Aproxime \(f(-0{,}01)\).`,
+pista:R`Con \(x=0\) queda \(3y^2-1-2y=0\). Derivá todo respecto de \(x\) y evaluá.`,
+res:R`\(f(0)=1\), \(f'(0)=\tfrac12\). Normal: \(y=1-2x\). \(f(-0{,}01)\approx0{,}995\).`,
+pasos:[R`<b>\(f(0)\).</b> \(3y^2-1-2y=0\Rightarrow y=\frac{2\pm4}{6}\in\{1,-\tfrac13\}\). Como \(f(0)>0\), \(f(0)=1\).`,
+R`<b>Derivar.</b> \[6yy'\cos(xy)-3y^2\sen(xy)(y+xy')-e^{x^3y^2}(3x^2y^2+2x^3yy')-2y'=2.\]`,
+R`<b>Evaluar en \((0,1)\).</b> \(6y'-0-0-2y'=2\Rightarrow f'(0)=\tfrac12\).`,
+R`<b>Normal.</b> Pendiente \(-1/f'(0)=-2\): \(y=1-2x\).`,
+R`<b>Aproximación.</b> \(f(-0{,}01)\approx1+\tfrac12(-0{,}01)=0{,}995\).`]},
+{tema:'Derivada por definición',enun:R`Sabiendo que \(\lim_{x\to0^+}x\ln x=0\), analice la existencia de \(f'(0)\) para \[f(x)=\begin{cases}|x|^{5/2}\ln|x|+e^{2x}&x\neq0\\1&x=0\end{cases}.\]`,
+pista:R`Cociente incremental: separá \(\frac{|h|^{5/2}\ln|h|}{h}\) y \(\frac{e^{2h}-1}{h}\).`,res:R`\(f'(0)=2\)`,
+pasos:[R`<b>Cociente incremental.</b> \[\frac{f(h)-f(0)}{h}=\frac{|h|^{5/2}\ln|h|}{h}+\frac{e^{2h}-1}{h}.\]`,
+R`<b>Segundo término.</b> \(\frac{e^{2h}-1}{2h}\cdot2\to2\) (límite notable).`,
+R`<b>Primer término.</b> \(\left|\frac{|h|^{5/2}\ln|h|}{h}\right|=|h|^{1/2}\cdot\big||h|\ln|h|\big|\to0\cdot0=0\) usando el dato con \(x=|h|\).`,
+R`<b>Respuesta.</b> \(f'(0)\) existe y vale 2.`]},
+E5BIY]},
+{id:'p1-2017-sep',corto:'1er parcial · sept. 2017',titulo:'1er Parcial · 28 de septiembre de 2017',fecha:'Matemática 1 / Análisis I',regla:NOL,ejercicios:[
+{tema:'Límites',enun:R`Analice: 1) \(\displaystyle\lim_{x\to0^+}\frac{3^{1/x}-2^{1/x}}{e^{1/x}-2^{1/x}}\) 2) \(\displaystyle\lim_{x\to0}\frac{\ln(1+x+x^2)\cos(1/x)}{e^{\sqrt[3]x}-1}\).`,
+pista:R`1) Cambiá \(t=1/x\to+\infty\) y dividí por la potencia de base más grande. 2) Equivalentes: \(\ln(1+u)\sim u\), \(e^u-1\sim u\), y el coseno está acotado.`,
+res:R`1) \(+\infty\) (no existe finito). 2) \(0\).`,
+pasos:[R`<b>1) Cambio.</b> \(t=1/x\to+\infty\): \(\frac{3^t-2^t}{e^t-2^t}\). Bases ordenadas: \(2<e<3\).`,
+R`<b>1) Dividir por \(e^t\).</b> \(\frac{(3/e)^t-(2/e)^t}{1-(2/e)^t}\). Como \(3/e>1\), el numerador \(\to+\infty\); el denominador \(\to1\). El límite es \(+\infty\).`,
+R`<b>2) Reescribir.</b> \[\frac{\ln(1+x+x^2)}{x+x^2}\cdot\frac{\sqrt[3]x}{e^{\sqrt[3]x}-1}\cdot\frac{x+x^2}{\sqrt[3]x}\cdot\cos(1/x).\]`,
+R`<b>2) Calcular.</b> Los dos primeros factores \(\to1\). El tercero: \(\frac{x(1+x)}{x^{1/3}}=x^{2/3}(1+x)\to0\). Infinitésimo por acotado: el límite es \(0\).`]},
+{tema:'Derivabilidad',enun:R`Sea \(f(x)=\dfrac{|x-1|^3}{x^2+x-2}\). Determine en qué puntos \(x_0\notin\text{dom}f\) se puede definir \(f(x_0)\) para que \(f\) sea derivable en \(x_0\).`,
+pista:R`\(x^2+x-2=(x-1)(x+2)\). Para ser derivable primero tiene que poder ser continua.`,
+res:R`Solo en \(x_0=1\), definiendo \(f(1)=0\); queda \(f'(1)=0\). En \(x_0=-2\) es imposible (límite infinito).`,
+pasos:[R`<b>Fuera del dominio.</b> \(x^2+x-2=(x-1)(x+2)\): \(x_0\in\{1,-2\}\).`,
+R`<b>\(x_0=-2\).</b> Numerador \(\to27\), denominador \(\to0\): \(f\to\pm\infty\). No puede ser continua, menos derivable.`,
+R`<b>\(x_0=1\).</b> \(f(x)=\frac{|x-1|^3}{(x-1)(x+2)}=\frac{(x-1)|x-1|}{x+2}\to0\). Para continuidad hay que definir \(f(1)=0\).`,
+R`<b>Derivada en 1.</b> \(\frac{f(x)-0}{x-1}=\frac{|x-1|}{x+2}\to0\). Existe \(f'(1)=0\).`,
+R`<b>Respuesta.</b> Únicamente \(x_0=1\) con \(f(1)=0\).`]},
+{tema:'Derivada implícita',enun:R`Sea \(y=f(x)\) derivable cerca de 0 que satisface \(3y^2e^{xy}-\cos(xy)-2y=x\) con \(f(0)<0\). 1) Halle la recta tangente en \((0,f(0))\). 2) Aproxime \(f(0{,}01)\).`,
+pista:R`En \(x=0\): \(3y^2-1-2y=0\). Elegí la raíz negativa.`,
+res:R`\(f(0)=-\tfrac13\), \(f'(0)=-\tfrac5{18}\). Tangente \(y=-\tfrac13-\tfrac5{18}x\). \(f(0{,}01)\approx-0{,}33611\).`,
+pasos:[R`<b>\(f(0)\).</b> \(3y^2-2y-1=0\Rightarrow y\in\{1,-\tfrac13\}\). Con \(f(0)<0\): \(f(0)=-\tfrac13\).`,
+R`<b>Derivar.</b> \[6yy'e^{xy}+3y^2e^{xy}(y+xy')+\sen(xy)(y+xy')-2y'=1.\]`,
+R`<b>Evaluar en \((0,-\tfrac13)\).</b> \(6(-\tfrac13)y'+3\cdot\tfrac19\cdot(-\tfrac13)+0-2y'=1\Rightarrow-4y'-\tfrac19=1\Rightarrow f'(0)=-\tfrac{5}{18}\).`,
+R`<b>Tangente.</b> \(y=-\tfrac13-\tfrac5{18}x\).`,
+R`<b>Aproximación.</b> \(f(0{,}01)\approx-\tfrac13-\tfrac{5}{18}\cdot0{,}01\approx-0{,}33611\).`]},
+E4TG,E5BIY]},
+{id:'p1-2018-abr',corto:'1er parcial · abril 2018',titulo:'1er Parcial · 21 de abril de 2018',fecha:'Matemática 1 / Análisis I',regla:NOL,ejercicios:[
+{tema:'Límites',enun:R`Analice: 1) \(\displaystyle\lim_{x\to1}\left[\frac{2\sqrt x-2}{x-1}\right]^{\frac1{x-1}}\) 2) \(\displaystyle\lim_{x\to0}\frac{\ln(1+\arctg(2x^2+x^3))\sen(1/x)}{x+x^2}\).`,
+pista:R`1) Racionalizá: \(\frac{2(\sqrt x-1)}{x-1}=\frac{2}{\sqrt x+1}\). 2) Equivalentes en cadena: \(\ln(1+u)\sim u\), \(\arctg v\sim v\).`,
+res:R`1) \(e^{-1/4}\). 2) \(0\).`,
+pasos:[R`<b>1) Base.</b> \(\frac{2(\sqrt x-1)}{(\sqrt x-1)(\sqrt x+1)}=\frac2{\sqrt x+1}\to1\); exponente \(\to\pm\infty\): \(1^\infty\).`,
+R`<b>1) Base − 1.</b> \(\frac{2}{\sqrt x+1}-1=\frac{1-\sqrt x}{\sqrt x+1}\).`,
+R`<b>1) Exponente de e.</b> \(\frac{1-\sqrt x}{(\sqrt x+1)(x-1)}=\frac{-(\sqrt x-1)}{(\sqrt x+1)(\sqrt x-1)(\sqrt x+1)}=\frac{-1}{(\sqrt x+1)^2}\to-\frac14\). Límite: \(e^{-1/4}\) (vale para ambos laterales).`,
+R`<b>2) Reescribir.</b> Con \(u=2x^2+x^3\): \[\frac{\ln(1+\arctg u)}{\arctg u}\cdot\frac{\arctg u}{u}\cdot\frac{x^2(2+x)}{x(1+x)}\cdot\sen\tfrac1x.\]`,
+R`<b>2) Conclusión.</b> Los dos primeros \(\to1\), el tercero \(=\frac{x(2+x)}{1+x}\to0\) y \(\sen(1/x)\) está acotado. El límite es \(0\).`]},
+{tema:'Continuidad',enun:R`Indique dónde \(f\) es continua y clasifique sus discontinuidades: \(f(x)=\lfloor x\rfloor\dfrac{x^2+x-2}{x^2-2x+1}\).`,
+pista:R`Simplificá: \(\frac{(x-1)(x+2)}{(x-1)^2}=\frac{x+2}{x-1}\). La parte entera salta en los enteros, salvo que el otro factor se anule.`,
+res:R`Continua en \(\mathbb R-\{n\in\mathbb Z: n\neq-2\}\). En \(x=1\): esencial de 2da especie (\(+\infty\) por derecha). En cada entero \(n\neq1,-2\): salto. En \(x=-2\): continua.`,
+pasos:[R`<b>Dominio y forma.</b> Dom \(=\mathbb R-\{1\}\). Para \(x\neq1\): \(f(x)=\lfloor x\rfloor\,g(x)\), con \(g(x)=\frac{x+2}{x-1}\) continua.`,
+R`<b>Fuera de los enteros</b> \(\lfloor x\rfloor\) es constante localmente: \(f\) es continua.`,
+R`<b>En un entero \(n\neq1\).</b> \(\lim_{x\to n^-}f=(n-1)g(n)\), \(\lim_{x\to n^+}f=n\,g(n)=f(n)\). Difieren en \(g(n)\). Si \(g(n)\neq0\): <b>salto</b>.`,
+R`<b>\(n=-2\).</b> \(g(-2)=0\): ambos laterales valen 0 \(=f(-2)\). <b>Continua.</b>`,
+R`<b>\(x=1\).</b> Por izquierda \(\lfloor x\rfloor=0\Rightarrow f\to0\). Por derecha \(\lfloor x\rfloor=1\), \(g\to+\infty\). <b>Esencial de 2da especie.</b>`]},
+{tema:'Derivada implícita',enun:R`Si \(f\) es derivable en \(0\) y \(y=f(x)\) satisface \(y^x-\sqrt{2-\sqrt y}-x=0\), calcule \(f'(0)\) y la recta normal en \((0,f(0))\).`,
+pista:R`\(y^0=1\). Para derivar \(y^x\), escribilo como \(e^{x\ln y}\).`,
+res:R`\(f(0)=1\), \(f'(0)=4\). Normal: \(y=1-\tfrac x4\).`,
+pasos:[R`<b>\(f(0)\).</b> \(1-\sqrt{2-\sqrt y}=0\Rightarrow2-\sqrt y=1\Rightarrow y=1\).`,
+R`<b>Derivar.</b> \((y^x)'=y^x\left(\ln y+\frac{x\,y'}{y}\right)\). Además \(\left(\sqrt{2-\sqrt y}\right)'=\frac{1}{2\sqrt{2-\sqrt y}}\cdot\left(-\frac{y'}{2\sqrt y}\right)\).`,
+R`<b>Evaluar en \((0,1)\).</b> \(1\cdot(0+0)+\frac12\cdot\frac{y'}{2}-1=0\Rightarrow f'(0)=4\).`,
+R`<b>Normal.</b> Pendiente \(-\tfrac14\): \(y=1-\tfrac14x\).`]},
+{tema:'Derivabilidad',enun:R`Sea \(f(x)=\begin{cases}|x^2-1|&x\le1\\2x-2x^2&x>1\end{cases}\). 1) Calcule \(f'(x)\) donde exista. 2) Halle los puntos con recta tangente horizontal.`,
+pista:R`Abrí el módulo: \(x^2-1\ge0\iff|x|\ge1\). Puntos sospechosos: \(x=-1\) y \(x=1\).`,
+res:R`\(f'(x)=2x\) si \(x<-1\); \(-2x\) si \(-1<x\le1\); \(2-4x\) si \(x>1\). No existe en \(x=-1\). Tangente horizontal en \((0,1)\).`,
+pasos:[R`<b>Abrir el módulo.</b> \(f(x)=x^2-1\) si \(x\le-1\); \(1-x^2\) si \(-1<x\le1\); \(2x-2x^2\) si \(x>1\).`,
+R`<b>Interior de cada tramo.</b> \(2x\), \(-2x\), \(2-4x\).`,
+R`<b>\(x=-1\).</b> \(f(-1)=0\). Izq: \(\frac{x^2-1}{x+1}=x-1\to-2\). Der: \(\frac{1-x^2}{x+1}=1-x\to2\). Distintas: <b>no derivable</b>.`,
+R`<b>\(x=1\).</b> \(f(1)=0\), continua (\(2-2=0\)). Izq: \(\frac{1-x^2}{x-1}=-(1+x)\to-2\). Der: \(\frac{2x(1-x)}{x-1}=-2x\to-2\). <b>\(f'(1)=-2\)</b>.`,
+R`<b>Tangente horizontal.</b> \(2x=0\) no está en \(x<-1\); \(-2x=0\Rightarrow x=0\) ✓; \(2-4x=0\Rightarrow x=\tfrac12\), no es \(>1\). Único punto: \((0,1)\).`]},
+{tema:'Teoremas',enun:R`Pruebe que los gráficos de \(f(x)=\sen x\) y \(g(x)=x\cos x+1\), \(x\in[0,2\pi]\), se cortan en exactamente dos puntos.`,
+pista:R`Estudiá \(h=f-g\). Su derivada es muy simple: \(h'(x)=x\sen x\).`,
+res:R`\(h\) crece en \([0,\pi]\) de \(-1\) a \(\pi-1\) y decrece en \([\pi,2\pi]\) hasta \(-2\pi-1\): exactamente un cero en cada intervalo.`,
+pasos:[R`<b>Función auxiliar.</b> \(h(x)=\sen x-x\cos x-1\). Cortes \(\iff h(x)=0\).`,
+R`<b>Derivada.</b> \(h'(x)=\cos x-\cos x+x\sen x=x\sen x\): positiva en \((0,\pi)\), negativa en \((\pi,2\pi)\).`,
+R`<b>Valores.</b> \(h(0)=-1\), \(h(\pi)=\pi-1>0\), \(h(2\pi)=-2\pi-1<0\).`,
+R`<b>Bolzano + monotonía.</b> En \([0,\pi]\), \(h\) es continua, cambia de signo y es estrictamente creciente: un único cero. En \([\pi,2\pi]\) lo mismo, decreciente.`,
+R`<b>Conclusión.</b> Exactamente dos puntos de corte.`]}]},
+{id:'p1-2018-sep',corto:'1er parcial · sept. 2018',titulo:'1er Parcial · 22 de septiembre de 2018',fecha:'Matemática 1 / Análisis I',regla:NOL,ejercicios:[
+{tema:'Límite 1^∞',enun:R`Analice \[\lim_{x\to1}\left(\frac{2x^2+1}{2+x^2}\right)^{\frac{x^2-1}{\ln^2 x}}.\]`,
+pista:R`Usá \(\frac{\ln x}{x-1}\to1\) cuando \(x\to1\).`,res:R`\(e^{4/3}\)`,
+pasos:[R`<b>Forma.</b> Base \(\to\frac33=1\). Exponente: \(\frac{(x-1)(x+1)}{\ln^2x}\sim\frac{x+1}{x-1}\to\pm\infty\). Es \(1^\infty\).`,
+R`<b>Base − 1.</b> \(\frac{2x^2+1-2-x^2}{2+x^2}=\frac{x^2-1}{2+x^2}\).`,
+R`<b>Producto.</b> \[\frac{(x^2-1)^2}{(2+x^2)\ln^2x}=\left(\frac{x-1}{\ln x}\right)^2\frac{(x+1)^2}{2+x^2}\to1\cdot\frac43.\]`,
+R`<b>Respuesta.</b> \(e^{4/3}\).`]},
+{tema:'Continuidad',enun:R`Indique dónde es continua y clasifique las discontinuidades de \[f(x)=\left[\arctg\left(\frac{e^{1/x}}{x^3-x^2-x+1}\right)\right]^{-1}.\]`,
+pista:R`\(x^3-x^2-x+1=(x-1)^2(x+1)\). El arctg nunca vale 0 porque \(e^{1/x}>0\). Recordá \(\arctg(\pm\infty)=\pm\pi/2\).`,
+res:R`Continua en \(\mathbb R-\{-1,0,1\}\). \(x=1\): evitable (\(2/\pi\)). \(x=-1\): salto (\(\pm2/\pi\)). \(x=0\): esencial de 2da especie (\(+\infty\) por izquierda).`,
+pasos:[R`<b>Dominio.</b> \(x\neq0\) y \((x-1)^2(x+1)\neq0\). El argumento \(u\) nunca es 0, entonces \(\arctg u\neq0\). Dom \(=\mathbb R-\{-1,0,1\}\).`,
+R`<b>\(x=1\).</b> \(u=\frac{e^{1/x}}{(x-1)^2(x+1)}\to\frac{e}{0^+\cdot2}=+\infty\) por ambos lados. \(f\to\frac{1}{\pi/2}=\frac2\pi\). <b>Evitable.</b>`,
+R`<b>\(x=-1\).</b> \(u\to\frac{e^{-1}}{4\cdot0^\pm}=\pm\infty\). Por derecha \(f\to\frac2\pi\), por izquierda \(-\frac2\pi\). <b>Salto.</b>`,
+R`<b>\(x=0^+\).</b> \(e^{1/x}\to\infty\), denominador \(\to1\): \(u\to+\infty\), \(f\to\frac2\pi\).`,
+R`<b>\(x=0^-\).</b> \(e^{1/x}\to0^+\): \(u\to0^+\), \(\arctg u\to0^+\), \(f\to+\infty\). <b>Esencial de 2da especie.</b>`]},
+{tema:'Recta normal',enun:R`Halle los puntos \((x_0,y_0)\) de \(y=x^2\) cuya recta normal contiene a \((0,a)\), \(a\neq0\). Grafique las situaciones posibles.`,
+pista:R`Separá el caso \(x_0=0\) (normal vertical) del caso \(x_0\neq0\).`,
+res:R`Siempre \((0,0)\). Si \(a>\tfrac12\), además \(\left(\pm\sqrt{a-\tfrac12},\ a-\tfrac12\right)\). Si \(a\le\tfrac12\), solo \((0,0)\).`,
+pasos:[R`<b>\(x_0=0\).</b> La tangente es \(y=0\), la normal es el eje \(y\) (\(x=0\)), que contiene a \((0,a)\) para todo \(a\).`,
+R`<b>\(x_0\neq0\).</b> Normal: \(y-x_0^2=-\frac{1}{2x_0}(x-x_0)\). Con \((0,a)\): \(a-x_0^2=\frac12\Rightarrow x_0^2=a-\frac12\).`,
+R`<b>Casos.</b> Si \(a>\frac12\): dos puntos simétricos \(x_0=\pm\sqrt{a-\frac12}\). Si \(a\le\frac12\): ninguno además del origen.`,
+R`<b>Gráfico.</b> Para \(a>\frac12\): tres normales pasan por \((0,a)\) (el eje \(y\) y dos rectas simétricas). Para \(a\le\frac12\): solo el eje \(y\). (\(\frac12\) es el centro de curvatura de la parábola en el vértice.)`]},
+{tema:'Derivabilidad',enun:R`Pruebe que \(f(x)=\begin{cases}\sen(x^3-x^2)&x<0\\0&0\le x\le1\\(x-1)^2\cos\frac1{x-1}&x>1\end{cases}\) es derivable en \(\mathbb R\) y determine dónde \(f'\) es continua.`,
+pista:R`Cociente incremental en 0 y en 1. Después calculá \(f'\) en \(x>1\) y mirá su límite cuando \(x\to1^+\).`,
+res:R`\(f'(0)=f'(1)=0\). \(f'\) es continua en \(\mathbb R-\{1\}\) (en 1 aparece \(\sen\frac1{x-1}\), que no tiene límite).`,
+pasos:[R`<b>En 0.</b> \(f(0)=0\). Izq: \(\frac{\sen(h^3-h^2)}{h}=\frac{\sen(h^3-h^2)}{h^3-h^2}(h^2-h)\to1\cdot0=0\). Der: 0. \(f'(0)=0\).`,
+R`<b>En 1.</b> \(f(1)=0\). Izq: 0. Der: \(\frac{h^2\cos(1/h)}{h}=h\cos\frac1h\to0\). \(f'(1)=0\).`,
+R`<b>Fórmula de \(f'\).</b> \(x<0\): \(\cos(x^3-x^2)(3x^2-2x)\). \(0<x<1\): 0. \(x>1\): \(2(x-1)\cos\frac1{x-1}+\sen\frac1{x-1}\).`,
+R`<b>Continuidad de \(f'\).</b> En 0: \(\lim_{x\to0^-}f'=1\cdot0=0=f'(0)\) ✓. En 1: \(2(x-1)\cos\frac1{x-1}\to0\) pero \(\sen\frac1{x-1}\) oscila, no tiene límite. \(f'\) <b>no</b> es continua en 1.`]},
+{tema:'Bolzano y Rolle',enun:R`Con Bolzano y Rolle determine el número de raíces reales de \(f(x)=x^4+6x^2-x-1\).`,
+pista:R`\(f''=12x^2+12>0\). Buscá cambios de signo en \(-1,0,1\).`,res:R`Exactamente 2 raíces: una en \((-1,0)\) y otra en \((0,1)\).`,
+pasos:[R`<b>A lo sumo dos.</b> \(f'=4x^3+12x-1\), \(f''=12x^2+12>0\): \(f'\) estrictamente creciente, se anula a lo sumo una vez. Por Rolle, \(f\) tiene a lo sumo 2 raíces.`,
+R`<b>Al menos dos.</b> \(f(-1)=7>0\), \(f(0)=-1<0\), \(f(1)=5>0\). Por Bolzano hay raíz en \((-1,0)\) y en \((0,1)\).`,
+R`<b>Conclusión.</b> Exactamente dos raíces reales.`]}]},
+{id:'p1-2022-abr',corto:'1er parcial · abril 2022 (T2)',titulo:'1er Parcial · 20 de abril de 2022 · Tema 2',fecha:'Matemática 1 / Análisis I',regla:NOL,ejercicios:[
+{tema:'Límite 1^∞',enun:R`Analice \(\displaystyle\lim_{x\to+\infty}\left(\frac{2x^2+\cos x}{2x^2-\sqrt x+1}\right)^{g(x)}\) con \(g(x)=x^2\ln\left(1+\frac1{\sqrt x}\right)\).`,
+pista:R`\(g(x)=x^{3/2}\cdot\frac{\ln(1+1/\sqrt x)}{1/\sqrt x}\sim x^{3/2}\).`,res:R`\(e^{1/2}\)`,
+pasos:[R`<b>Forma.</b> Base \(\to1\) (\(\cos x\) acotado). \(g(x)\to+\infty\). Es \(1^\infty\).`,
+R`<b>Base − 1.</b> \(\frac{\cos x+\sqrt x-1}{2x^2-\sqrt x+1}\).`,
+R`<b>Producto.</b> \[\frac{\sqrt x+\cos x-1}{2x^2-\sqrt x+1}\cdot x^{3/2}\cdot\frac{\ln(1+1/\sqrt x)}{1/\sqrt x}.\] El último factor \(\to1\). Dividiendo por \(x^2\): \(\frac{(1+\frac{\cos x-1}{\sqrt x})}{2-\dots}\to\frac12\).`,
+R`<b>Respuesta.</b> \(e^{1/2}\).`]},
+{tema:'Continuidad',enun:R`Clasifique las discontinuidades de \(f(x)=\dfrac{x\sqrt{x^4+2x^2}}{\cos(2x)-1}\).`,
+pista:R`\(\sqrt{x^4+2x^2}=|x|\sqrt{x^2+2}\) y \(\cos2x-1=-2\sen^2x\).`,
+res:R`\(x=0\): salto (\(-\tfrac{\sqrt2}2\) por derecha, \(\tfrac{\sqrt2}2\) por izquierda). \(x=k\pi,\ k\neq0\): esencial de 2da especie.`,
+pasos:[R`<b>Dominio.</b> \(\cos2x=1\iff x=k\pi\). Dom \(=\mathbb R-\{k\pi\}\).`,
+R`<b>Reescribir.</b> \(f(x)=\frac{x|x|\sqrt{x^2+2}}{-2\sen^2x}\).`,
+R`<b>\(x=0\).</b> \(\frac{x|x|}{\sen^2x}=\frac{x^2}{\sen^2x}\cdot\sgn x\to\pm1\). Entonces \(f\to\mp\frac{\sqrt2}{2}\): por derecha \(-\frac{\sqrt2}2\), por izquierda \(\frac{\sqrt2}2\). <b>Salto.</b>`,
+R`<b>\(x=k\pi,\ k\neq0\).</b> Numerador \(\to k\pi|k\pi|\sqrt{k^2\pi^2+2}\neq0\), denominador \(\to0^-\). \(f\to\infty\): <b>esencial de 2da especie</b>.`]},
+{tema:'Bolzano',enun:R`Pruebe que \(x^{2n}-ax+1\), \(n\in\mathbb N\), tiene al menos una raíz real si \(a\ge2\).`,
+pista:R`Evaluá en 0 y en 1.`,res:R`\(p(0)=1>0\), \(p(1)=2-a\le0\): raíz en \((0,1]\).`,
+pasos:[R`<b>Continuidad.</b> \(p(x)=x^{2n}-ax+1\) es polinomio, continua.`,
+R`<b>Valores.</b> \(p(0)=1>0\), \(p(1)=2-a\le0\).`,
+R`<b>Casos.</b> Si \(a=2\), \(x=1\) es raíz. Si \(a>2\), \(p(1)<0\) y por Bolzano hay raíz en \((0,1)\).`]},
+{tema:'Derivada implícita',enun:R`Si \(y=f(x)\) cumple \(x^2+2\sen x-\arctg(e^y)=2xy-\frac\pi4\) y es derivable cerca de 0, halle tangente y normal en \((0,f(0))\) y aproxime \(y(0{,}1)\).`,
+pista:R`En \(x=0\): \(\arctg(e^y)=\pi/4\Rightarrow e^y=1\).`,res:R`\(f(0)=0\), \(f'(0)=4\). Tangente \(y=4x\); normal \(y=-\tfrac x4\); \(y(0{,}1)\approx0{,}4\).`,
+pasos:[R`<b>\(f(0)\).</b> \(-\arctg(e^y)=-\frac\pi4\Rightarrow e^y=1\Rightarrow y=0\).`,
+R`<b>Derivar.</b> \(2x+2\cos x-\frac{e^yy'}{1+e^{2y}}=2y+2xy'\).`,
+R`<b>Evaluar en \((0,0)\).</b> \(2-\frac{y'}{2}=0\Rightarrow f'(0)=4\).`,
+R`<b>Rectas y aproximación.</b> Tangente \(y=4x\); normal \(y=-\frac14x\). \(y(0{,}1)\approx4\cdot0{,}1=0{,}4\).`]},
+{tema:'Derivabilidad',enun:R`Sea \(f(x)=\begin{cases}xe^{-1/x^2}&x<0\\|x^4-x|\sen x&x\ge0\end{cases}\). Halle \(f'(x)\) donde exista.`,
+pista:R`Sospechosos: \(x=0\) (pegado) y \(x=1\) (cero del módulo: \(x^4-x=x(x-1)(x^2+x+1)\)).`,
+res:R`\(x<0\): \(e^{-1/x^2}(1+\frac2{x^2})\). \(f'(0)=0\). \(0<x<1\): \((1-4x^3)\sen x+(x-x^4)\cos x\). \(x>1\): \((4x^3-1)\sen x+(x^4-x)\cos x\). No existe en \(x=1\).`,
+pasos:[R`<b>Signo del módulo.</b> \(x^4-x=x(x^3-1)\): negativo en \((0,1)\), positivo para \(x>1\).`,
+R`<b>Tramos.</b> \(x<0\): \(f'=e^{-1/x^2}+xe^{-1/x^2}\frac{2}{x^3}=e^{-1/x^2}\left(1+\frac{2}{x^2}\right)\). En \((0,1)\) y \((1,\infty)\) derivar el producto con el signo correspondiente.`,
+R`<b>\(x=0\).</b> \(f(0)=0\). Izq: \(\frac{he^{-1/h^2}}{h}=e^{-1/h^2}\to0\). Der: \(|h^4-h|\frac{\sen h}{h}\to0\cdot1=0\). \(f'(0)=0\).`,
+R`<b>\(x=1\).</b> \(f(1)=0\). \(\frac{|x^4-x|\sen x}{x-1}=\frac{|x-1|}{x-1}\,x(x^2+x+1)\sen x\to\pm3\sen1\). Laterales distintos: <b>no derivable</b>.`]}]},
+{id:'p1-2022-sep',corto:'1er parcial · sept. 2022 (T2)',titulo:'1er Parcial · 17 de septiembre de 2022 · Tema 2',fecha:'Matemática 1 / Análisis I',regla:NOL,ejercicios:[
+{tema:'Continuidad',enun:R`Clasifique las discontinuidades de \(f(x)=\dfrac{\arctg\left(\frac{x+1}{x}\right)}{x^2-1}\).`,
+pista:R`Puntos: \(0,1,-1\). En \(-1\) el numerador también tiende a 0: \(\arctg u\sim u\).`,
+res:R`\(x=0\): salto (\(-\pi/2\) por derecha, \(\pi/2\) por izquierda). \(x=1\): esencial de 2da especie. \(x=-1\): evitable (límite \(1/2\)).`,
+pasos:[R`<b>Dominio.</b> \(\mathbb R-\{-1,0,1\}\).`,
+R`<b>\(x=0\).</b> \(\frac{x+1}{x}\to\pm\infty\) (\(+\) por derecha). \(\arctg\to\pm\frac\pi2\), denominador \(\to-1\). Laterales \(-\frac\pi2\) (der) y \(\frac\pi2\) (izq): <b>salto</b>.`,
+R`<b>\(x=1\).</b> Numerador \(\to\arctg2\neq0\), denominador \(\to0\): <b>esencial de 2da especie</b>.`,
+R`<b>\(x=-1\).</b> \(u=\frac{x+1}{x}\to0\). \(\frac{\arctg u}{u}\cdot\frac{x+1}{x(x-1)(x+1)}=\frac{\arctg u}{u}\cdot\frac1{x(x-1)}\to1\cdot\frac12\). <b>Evitable</b>.`]},
+{tema:'Derivabilidad de orden 2',enun:R`Halle \(a,b,c\) para que \(f(x)=\begin{cases}-2x^2+bx+c&x<0\\a\cos x&x\ge0\end{cases}\) sea dos veces derivable en \(\mathbb R\). Encuentre \(f''\).`,
+pista:R`Imponé continuidad, igualdad de derivadas laterales y de segundas derivadas laterales en 0.`,
+res:R`\(a=4,\ b=0,\ c=4\). \(f''(x)=-4\) si \(x<0\), \(-4\cos x\) si \(x\ge0\).`,
+pasos:[R`<b>Continuidad en 0.</b> \(\lim_{0^-}f=c\), \(f(0)=a\Rightarrow c=a\).`,
+R`<b>\(f'(0)\).</b> Izq: \(\frac{-2h^2+bh+c-a}{h}=-2h+b\to b\). Der: \(\frac{a\cos h-a}{h}\to0\). Entonces \(b=0\) y \(f'(x)=-4x\) (\(x<0\)), \(-a\sen x\) (\(x\ge0\)).`,
+R`<b>\(f''(0)\).</b> Izq: \(\frac{-4h}{h}=-4\). Der: \(\frac{-a\sen h}{h}\to-a\). Entonces \(a=4\), \(c=4\).`,
+R`<b>\(f''\).</b> \(f''(x)=-4\) para \(x<0\) y \(-4\cos x\) para \(x\ge0\) (en 0 ambas dan \(-4\)).`]},
+{tema:'Derivabilidad con módulo',enun:R`Dada \(f(x)=|x^2-x-2|\sen(x+1)\), determine dónde existe \(f'\) y calcúlela.`,
+pista:R`\(x^2-x-2=(x-2)(x+1)\). En \(x=-1\) el seno también se anula.`,
+res:R`Existe en \(\mathbb R-\{2\}\). \(f'(-1)=0\). Para \(x<-1\) o \(x>2\): \((2x-1)\sen(x+1)+(x^2-x-2)\cos(x+1)\); en \((-1,2)\) lo mismo cambiado de signo.`,
+pasos:[R`<b>Ceros del módulo.</b> \(x=-1\) y \(x=2\).`,
+R`<b>\(x=-1\).</b> \(\frac{|x-2||x+1|\sen(x+1)}{x+1}\): \(|x+1|\cdot\frac{\sen(x+1)}{x+1}\to0\cdot1\). \(f'(-1)=0\).`,
+R`<b>\(x=2\).</b> \(\frac{|x-2|}{x-2}|x+1|\sen(x+1)\to\pm3\sen3\). Como \(\sen3\neq0\): <b>no derivable</b>.`,
+R`<b>Resto.</b> Donde \(x^2-x-2>0\): \(f'=(2x-1)\sen(x+1)+(x^2-x-2)\cos(x+1)\). En \((-1,2)\): \(f'=-(2x-1)\sen(x+1)-(x^2-x-2)\cos(x+1)\).`]},
+{tema:'Derivada implícita',enun:R`\(y=f(x)\) positiva y derivable cerca de 0 cumple \(\sqrt{\sqrt y-x}-y^2=0\). Halle tangente y normal en \((0,f(0))\) y aproxime \(f(0{,}02)\).`,
+pista:R`En \(x=0\): \(y^{1/4}=y^2\Rightarrow y=1\).`,
+res:R`\(f(0)=1\), \(f'(0)=-\tfrac27\). Tangente \(y=1-\tfrac27x\); normal \(y=1+\tfrac72x\); \(f(0{,}02)\approx0{,}99429\).`,
+pasos:[R`<b>\(f(0)\).</b> \(\sqrt{\sqrt y}=y^2\Rightarrow y^{1/4}=y^2\Rightarrow y=1\) (positiva).`,
+R`<b>Derivar.</b> \(\frac{1}{2\sqrt{\sqrt y-x}}\left(\frac{y'}{2\sqrt y}-1\right)-2yy'=0\).`,
+R`<b>Evaluar en \((0,1)\).</b> \(\frac12\left(\frac{y'}2-1\right)-2y'=0\Rightarrow-\frac74y'=\frac12\Rightarrow f'(0)=-\frac27\).`,
+R`<b>Rectas y aproximación.</b> \(y=1-\frac27x\); normal \(y=1+\frac72x\). \(f(0{,}02)\approx1-\frac{0{,}04}{7}\approx0{,}99429\).`]},
+{tema:'Límite (trampa: no es 1^∞)',enun:R`Analice \[\lim_{x\to-1}\left[\frac{\sen^3(\frac\pi2x)+1}{\cos^2(\frac\pi2x)}\right]^{g(x)},\quad g(x)=\frac{\ln(x^2-x-1)}{(x+1)^3}.\]`,
+pista:R`Llamá \(u=\sen(\frac\pi2x)\to-1\) y usá \(\cos^2=1-u^2\). Factorizá \(u^3+1\). La base no tiende a 1.`,
+res:R`\(0\) (la base tiende a \(3/2\) y el exponente a \(-\infty\)).`,
+pasos:[R`<b>Base.</b> \(u\to-1\): \(\frac{u^3+1}{1-u^2}=\frac{(u+1)(u^2-u+1)}{(1-u)(1+u)}=\frac{u^2-u+1}{1-u}\to\frac32\).`,
+R`<b>Exponente.</b> \(\ln(x^2-x-1)=\ln(1+(x^2-x-2))\sim x^2-x-2=(x-2)(x+1)\). Así \(g(x)\sim\frac{x-2}{(x+1)^2}\to\frac{-3}{0^+}=-\infty\).`,
+R`<b>Conclusión.</b> \(\left(\frac32\right)^{-\infty}=0\). El límite existe y vale 0. No era un \(1^\infty\): siempre calculá primero el límite de la base.`]}]},
+{id:'p1-2024-sep',corto:'1er parcial · sept. 2024',titulo:'1er Parcial · 28 de septiembre de 2024',fecha:'Análisis Matemático I',regla:NOL,ejercicios:[
+{tema:'Derivada implícita',enun:R`Sea \(f\) positiva y derivable cerca de 0 tal que \(y=f(x)\) cumple \(e^{xy}+y^2-\cos(x)y=1\). Aproxime \(f(-0{,}05)\).`,
+pista:R`En \(x=0\): \(1+y^2-y=1\).`,res:R`\(f(0)=1\), \(f'(0)=-1\), \(f(-0{,}05)\approx1{,}05\).`,
+pasos:[R`<b>\(f(0)\).</b> \(y^2-y=0\Rightarrow y=1\) (positiva).`,
+R`<b>Derivar.</b> \(e^{xy}(y+xy')+2yy'+\sen x\,y-\cos x\,y'=0\).`,
+R`<b>Evaluar.</b> \(1+2y'-y'=0\Rightarrow f'(0)=-1\).`,
+R`<b>Aproximación.</b> \(f(-0{,}05)\approx1+(-1)(-0{,}05)=1{,}05\).`]},
+{...E4TG,enun:R`Halle todas las rectas tangentes al gráfico de \(f(x)=x^3-2x+2\) que contienen al punto \((0,0)\). Indique para cada una el punto de tangencia.`,res:R`Una sola: \(y=x\), tangente en \((1,1)\).`},
+{tema:'Continuidad',enun:R`Halle y clasifique las discontinuidades de \[f(x)=\frac{2x+x^2}{e^{|x|}-1}+\frac{\ln(x^2+2x+2)}{(x+1)^3}.\]`,
+pista:R`\(x^2+2x+2=(x+1)^2+1\). En 0: \(e^{|x|}-1\sim|x|\).`,
+res:R`\(x=0\): salto (\(2+\ln2\) y \(-2+\ln2\)). \(x=-1\): esencial de 2da especie.`,
+pasos:[R`<b>Dominio.</b> \(e^{|x|}=1\iff x=0\); \(x\neq-1\). El log siempre está definido.`,
+R`<b>\(x=0\).</b> \(\frac{x(2+x)}{e^{|x|}-1}=\frac{|x|}{e^{|x|}-1}\cdot\frac{x}{|x|}(2+x)\to\pm2\). El segundo término \(\to\ln2\). Laterales \(2+\ln2\) y \(-2+\ln2\): <b>salto</b>.`,
+R`<b>\(x=-1\).</b> Primer término \(\to\frac{-1}{e-1}\). Segundo: \(\frac{\ln(1+(x+1)^2)}{(x+1)^3}\sim\frac{1}{x+1}\to\pm\infty\). <b>Esencial de 2da especie</b>.`]},
+{tema:'Límite 1^∞',enun:R`Analice \(\displaystyle\lim_{x\to\infty}\left(\frac{2x^3+x^2-1}{2x^3-x^2+3}\right)^{g(x)}\) con \(g(x)=(2x^2+3x)\ln\left(1+\frac3x\right)\).`,
+pista:R`\(\ln(1+3/x)\sim3/x\), así que \(g\sim6x\).`,res:R`\(e^{6}\)`,
+pasos:[R`<b>Forma.</b> Base \(\to1\), \(g\to\infty\): \(1^\infty\).`,
+R`<b>Base − 1.</b> \(\frac{2x^2-4}{2x^3-x^2+3}\).`,
+R`<b>Producto.</b> \(\frac{(2x^2-4)(2x^2+3x)}{2x^3-x^2+3}\cdot\frac3x\cdot\frac{\ln(1+3/x)}{3/x}\to\frac{4x^4\cdot3}{2x^4}\cdot1=6\).`,
+R`<b>Respuesta.</b> \(e^6\).`]},
+{tema:'Bolzano',enun:R`Pruebe que \(x^{2n}+ax^2-1=0\) tiene al menos dos soluciones si \(a>0\), \(n\in\mathbb N\).`,
+pista:R`Evaluá en 0 y en 1, y aprovechá que la función es par.`,res:R`Hay una raíz en \((0,1)\) y su opuesta en \((-1,0)\).`,
+pasos:[R`<b>Bolzano.</b> \(h(x)=x^{2n}+ax^2-1\), continua. \(h(0)=-1<0\), \(h(1)=a>0\): existe \(c\in(0,1)\) con \(h(c)=0\).`,
+R`<b>Paridad.</b> \(h(-x)=h(x)\), así que \(h(-c)=0\) con \(-c\in(-1,0)\), distinto de \(c\).`,
+R`<b>Conclusión.</b> Al menos dos soluciones.`]}]}
+];
+const ETGC={tema:'Recta tangente a una hipérbola',
+enun:R`Determine los valores de \(c\in\mathbb R-\{0\}\) para los cuales la recta que pasa por \((0,3)\) y \((5,-2)\) es tangente al gráfico de \(f(x)=\frac{c}{x+1}\) en algún punto.`,
+pista:R`La recta es \(y=3-x\). Tangente en \(x=a\): igualá pendientes (\(f'(a)=-1\)) y valores (\(f(a)=3-a\)).`,
+res:R`\(c=4\); tangente en el punto \((1,2)\).`,
+pasos:[R`<b>La recta.</b> Pendiente \(\frac{-2-3}{5-0}=-1\): \(y=3-x\).`,
+R`<b>Condición de pendiente.</b> \(f'(a)=-\frac{c}{(a+1)^2}=-1\Rightarrow c=(a+1)^2\).`,
+R`<b>Condición de punto.</b> \(f(a)=\frac{c}{a+1}=a+1\) debe ser \(3-a\): \(a+1=3-a\Rightarrow a=1\).`,
+R`<b>Respuesta.</b> \(c=(1+1)^2=4\). Punto de tangencia \((1,2)\).`]};
+const REC=[
+{id:'r1-2017-jun',corto:'Recuperatorio · junio 2017',titulo:'Recuperatorio 1er Parcial · 26 de junio de 2017',fecha:'Matemática 1 / Análisis I',regla:SIL,ejercicios:[
+{tema:'Límite 1^∞ (sin L’Hôpital)',enun:R`Analice sin L'Hôpital \[\lim_{x\to1}\left(\frac{x^2+x+1}{2x^2+1}\right)^{\frac{\sen(x-1)}{x^2-2x+1}}.\]`,
+pista:R`\(x^2-2x+1=(x-1)^2\); usá \(\frac{\sen(x-1)}{x-1}\to1\).`,res:R`\(e^{-1/3}\)`,
+pasos:[R`<b>Forma.</b> Base \(\to\frac33=1\). Exponente \(\frac{\sen(x-1)}{(x-1)^2}\sim\frac{1}{x-1}\to\pm\infty\).`,
+R`<b>Base − 1.</b> \(\frac{x-x^2}{2x^2+1}=\frac{-x(x-1)}{2x^2+1}\).`,
+R`<b>Producto.</b> \(\frac{-x(x-1)}{2x^2+1}\cdot\frac{\sen(x-1)}{(x-1)^2}=\frac{-x}{2x^2+1}\cdot\frac{\sen(x-1)}{x-1}\to-\frac13\).`,
+R`<b>Respuesta.</b> \(e^{-1/3}\).`]},
+{tema:'Tangente horizontal (implícita)',enun:R`\(f\) derivable y positiva, \(y=f(x)\) satisface \(x^2-xy+y^2=3\). Halle los puntos con recta tangente paralela al eje \(x\).`,
+pista:R`Derivá, despejá \(y'\) e igualá a cero. Sustituí en la ecuación original.`,res:R`\((1,2)\)`,
+pasos:[R`<b>Derivar.</b> \(2x-y-xy'+2yy'=0\Rightarrow y'=\frac{y-2x}{2y-x}\).`,
+R`<b>\(y'=0\).</b> \(y=2x\) (con \(2y-x\neq0\)).`,
+R`<b>Sustituir.</b> \(x^2-2x^2+4x^2=3\Rightarrow x=\pm1\), \(y=\pm2\). Con \(y>0\): \((1,2)\). Allí \(2y-x=3\neq0\) ✓.`]},
+{tema:'Continuidad',enun:R`Indique dónde es continua y clasifique las discontinuidades de \(f(x)=\arctg\left(\frac{x}{2-x}\right)+\frac{x\sen(x+x^2)}{\ln(1+x^2)}\).`,
+pista:R`Problemas en \(x=2\) y \(x=0\) (\(\ln(1+x^2)=0\)). En 0 usá equivalentes.`,
+res:R`Continua en \(\mathbb R-\{0,2\}\). \(x=0\): evitable (límite 1). \(x=2\): salto.`,
+pasos:[R`<b>Dominio.</b> \(\mathbb R-\{0,2\}\), continua allí por composición/álgebra.`,
+R`<b>\(x=0\).</b> \(\arctg0=0\). \(\frac{x\sen(x+x^2)}{\ln(1+x^2)}\sim\frac{x(x+x^2)}{x^2}=1+x\to1\). <b>Evitable</b>.`,
+R`<b>\(x=2\).</b> \(\frac{x}{2-x}\to\mp\infty\) (\(-\infty\) por derecha). Arctg \(\to\mp\frac\pi2\). El otro término es continuo en 2. Laterales distintos y finitos: <b>salto</b>.`]},
+{tema:'Derivada de función partida',enun:R`Halle la derivada de \(f(x)=\begin{cases}\frac{1-e^{-x}}{x}&x<0\\1&x=0\\\frac{\sen x}{x}-\frac12x&x>0\end{cases}\) donde exista.`,
+pista:R`Primero verificá continuidad en 0. Luego cociente incremental a cada lado (acá vale L'Hôpital).`,
+res:R`\(f'(0)=-\tfrac12\). \(x<0\): \(\frac{xe^{-x}-1+e^{-x}}{x^2}\). \(x>0\): \(\frac{x\cos x-\sen x}{x^2}-\frac12\).`,
+pasos:[R`<b>Continuidad.</b> \(\frac{1-e^{-x}}{x}\to1\) y \(\frac{\sen x}{x}-\frac x2\to1\). Continua en 0.`,
+R`<b>Izquierda.</b> \(\frac{\frac{1-e^{-h}}{h}-1}{h}=\frac{1-e^{-h}-h}{h^2}\). L'Hôpital dos veces: \(\frac{e^{-h}-1}{2h}\to-\frac12\).`,
+R`<b>Derecha.</b> \(\frac{\frac{\sen h}{h}-\frac h2-1}{h}=\frac{\sen h-h}{h^2}-\frac12\to0-\frac12\).`,
+R`<b>Resultado.</b> \(f'(0)=-\frac12\). Fuera de 0, derivar cada fórmula.`]},
+{tema:'Contar soluciones',enun:R`Pruebe que \(\ln(x^2)=x-1-x^2\) tiene exactamente dos soluciones.`,
+pista:R`\(h(x)=\ln(x^2)-x+1+x^2\) en \(x\neq0\). \(h'(x)=\frac{2x^2-x+2}{x}\).`,res:R`Una solución en \((-1,0)\) y otra en \((0,1)\).`,
+pasos:[R`<b>Auxiliar.</b> \(h(x)=\ln x^2-x+1+x^2\), dominio \(x\neq0\).`,
+R`<b>Monotonía.</b> \(h'=\frac2x-1+2x=\frac{2x^2-x+2}{x}\); el numerador tiene discriminante negativo, es siempre positivo. \(h\) crece en \((0,\infty)\) y decrece en \((-\infty,0)\).`,
+R`<b>En \((0,\infty)\).</b> \(h\to-\infty\) en \(0^+\), \(h(1)=1>0\): exactamente una raíz (Bolzano + inyectividad).`,
+R`<b>En \((-\infty,0)\).</b> \(h(-1)=3>0\), \(h\to-\infty\) en \(0^-\): exactamente una raíz en \((-1,0)\).`]}]},
+{id:'r1-2017-nov',corto:'Recuperatorio · nov. 2017',titulo:'Recuperatorio 1er Parcial · 27 de noviembre de 2017',fecha:'Matemática 1 / Análisis I',regla:SIL,ejercicios:[
+{tema:'Continuidad con signo',enun:R`Clasifique las discontinuidades de \[f(x)=(1+\sgn x)\frac{\sen(x^2+x^3)}{x^2-x}+\frac{|x^3-1|}{e^x-e}.\]`,
+pista:R`Para \(x<0\), \(1+\sgn x=0\). En \(x=1\) el primer sumando explota.`,
+res:R`\(x=0\): evitable (límite \(\frac{1}{1-e}\)). \(x=1\): esencial de 2da especie.`,
+pasos:[R`<b>Dominio.</b> \(x^2-x\neq0\) y \(e^x\neq e\): \(\mathbb R-\{0,1\}\).`,
+R`<b>\(x=0^-\).</b> Primer sumando vale 0. Segundo \(\to\frac{1}{1-e}\).`,
+R`<b>\(x=0^+\).</b> \(2\frac{\sen(x^2+x^3)}{x(x-1)}\sim\frac{2x^2(1+x)}{x(x-1)}\to0\). Total \(\frac1{1-e}\). <b>Evitable</b>.`,
+R`<b>\(x=1\).</b> \(\frac{2\sen2}{x(x-1)}\to\pm\infty\); el segundo sumando tiende a \(\pm\frac3e\) (finito). <b>Esencial de 2da especie</b>.`]},
+{tema:'Derivada implícita',enun:R`\(f\) derivable en 0 con \(y^x-ye^x+2\senh x=0\) y \(f(0)>0\). Halle tangente y normal en \((0,f(0))\) y aproxime \(f(-0{,}01)\).`,
+pista:R`\(y^0=1\Rightarrow1-y=0\). Derivá \(y^x=e^{x\ln y}\).`,res:R`\(f(0)=1\), \(f'(0)=1\). Tangente \(y=1+x\); normal \(y=1-x\); \(f(-0{,}01)\approx0{,}99\).`,
+pasos:[R`<b>\(f(0)\).</b> \(1-y=0\Rightarrow y=1\).`,
+R`<b>Derivar.</b> \(y^x\left(\ln y+\frac{xy'}{y}\right)-y'e^x-ye^x+2\cosh x=0\).`,
+R`<b>Evaluar.</b> \(0-y'-1+2=0\Rightarrow f'(0)=1\).`,
+R`<b>Rectas.</b> \(y=1+x\), \(y=1-x\). \(f(-0{,}01)\approx0{,}99\).`]},
+{tema:'Límite 1^∞',enun:R`Estudie sin L'Hôpital \(\displaystyle\lim_{x\to1}\left(\frac{x^3-1}{x^2+x-2}\right)^{\frac{2}{1-x}}\).`,
+pista:R`Factorizá y simplificá \(x-1\).`,res:R`\(e^{-4/3}\)`,
+pasos:[R`<b>Base.</b> \(\frac{(x-1)(x^2+x+1)}{(x-1)(x+2)}=\frac{x^2+x+1}{x+2}\to1\).`,
+R`<b>Base − 1.</b> \(\frac{x^2-1}{x+2}\).`,
+R`<b>Producto.</b> \(\frac{(x-1)(x+1)}{x+2}\cdot\frac{2}{1-x}=-\frac{2(x+1)}{x+2}\to-\frac43\).`,
+R`<b>Respuesta.</b> \(e^{-4/3}\).`]},
+{tema:'f’’ continua',enun:R`Dada \(f(x)=x^3\ln|x|\) (\(x\neq0\)), \(f(0)=0\), pruebe que \(f''\) es continua en \(\mathbb R\).`,
+pista:R`Calculá \(f'(0)\) y \(f''(0)\) por definición, y el límite de \(f''(x)\) cuando \(x\to0\). Usá \(x\ln|x|\to0\).`,
+res:R`\(f'(x)=3x^2\ln|x|+x^2\), \(f''(x)=6x\ln|x|+5x\) (\(x\neq0\)), \(f'(0)=f''(0)=0\) y \(\lim_{x\to0}f''=0\).`,
+pasos:[R`<b>\(f'\) fuera de 0.</b> \(3x^2\ln|x|+x^3\cdot\frac1x=3x^2\ln|x|+x^2\).`,
+R`<b>\(f'(0)\).</b> \(\frac{h^3\ln|h|}{h}=h\cdot(h\ln|h|)\to0\).`,
+R`<b>\(f''\) fuera de 0.</b> \(6x\ln|x|+3x+2x=6x\ln|x|+5x\).`,
+R`<b>\(f''(0)\).</b> \(\frac{f'(h)-0}{h}=3h\ln|h|+h\to0\).`,
+R`<b>Continuidad.</b> \(\lim_{x\to0}(6x\ln|x|+5x)=0=f''(0)\). Fuera de 0 es continua por álgebra de continuas.`]},
+{tema:'Desigualdad con Lagrange',enun:R`Pruebe que para \(1<a<b\) vale \(a+\ln\frac ba<b\).`,
+pista:R`Equivale a \(\ln b-\ln a<b-a\). Aplicá el TVM a \(\ln\) en \([a,b]\).`,res:R`Por Lagrange \(\ln b-\ln a=\frac1c(b-a)<b-a\) con \(c>1\).`,
+pasos:[R`<b>Reformular.</b> \(\ln b-\ln a<b-a\).`,
+R`<b>Lagrange.</b> \(\ln\) es continua en \([a,b]\) y derivable en \((a,b)\): existe \(c\in(a,b)\) con \(\ln b-\ln a=\frac{1}{c}(b-a)\).`,
+R`<b>Acotar.</b> \(c>a>1\Rightarrow\frac1c<1\) y como \(b-a>0\), \(\ln b-\ln a<b-a\).`]}]},
+{id:'r1-2018-jun',corto:'Recuperatorio · junio 2018',titulo:'Recuperatorio 1er Parcial · 22 de junio de 2018',fecha:'Matemática 1 / Análisis I',regla:'Se permite L\'Hôpital salvo donde se indique',ejercicios:[
+{tema:'Límite 1^∞',enun:R`Sin L'Hôpital: \(\displaystyle\lim_{x\to0}\left[1-\arcsen(x^2)\right]^{\frac1{1-\cos2x}}\).`,
+pista:R`\(\arcsen u\sim u\) y \(1-\cos v\sim\frac{v^2}{2}\).`,res:R`\(e^{-1/2}\)`,
+pasos:[R`<b>Forma.</b> \(1^\infty\).`,
+R`<b>Producto.</b> \(\frac{-\arcsen(x^2)}{1-\cos2x}=-\frac{\arcsen x^2}{x^2}\cdot\frac{(2x)^2}{1-\cos2x}\cdot\frac{x^2}{4x^2}\to-1\cdot2\cdot\frac14=-\frac12\).`,
+R`<b>Respuesta.</b> \(e^{-1/2}\).`]},
+{tema:'Continuidad',enun:R`Clasifique las discontinuidades de \(f(x)=(x-1)e^{\frac{1}{x-1}}+\frac{\ln(1+x^2)}{\sen x}\).`,
+pista:R`Puntos: \(x=1\) y \(x=k\pi\). En \(x=0\) el numerador también se anula.`,
+res:R`\(x=1\): esencial de 2da especie (\(+\infty\) por derecha). \(x=0\): evitable (límite \(-1/e\)). \(x=k\pi,\ k\neq0\): esencial de 2da especie.`,
+pasos:[R`<b>\(x=1^+\).</b> Con \(t=\frac1{x-1}\to+\infty\): \(\frac{e^t}{t}\to+\infty\). Por izquierda \((x-1)e^{1/(x-1)}\to0\). <b>Esencial de 2da especie</b>.`,
+R`<b>\(x=0\).</b> \(\frac{\ln(1+x^2)}{\sen x}\sim\frac{x^2}{x}\to0\). Primer término \(\to-e^{-1}\). <b>Evitable</b>, límite \(-\frac1e\).`,
+R`<b>\(x=k\pi,\ k\neq0\).</b> Numerador \(\ln(1+k^2\pi^2)>0\), denominador \(\to0\): <b>esencial de 2da especie</b>.`]},
+{tema:'Implícita, f’ y f’’',enun:R`\(f\) dos veces derivable en 0, \(y^2-y+\ln(1+x^2)=0\), \(f(0)=0\). Calcule \(f'(0)\) y \(f''(0)\).`,
+pista:R`Derivá dos veces la ecuación (la primera derivada ya obtenida se vuelve a derivar).`,res:R`\(f'(0)=0\), \(f''(0)=2\).`,
+pasos:[R`<b>Primera derivada.</b> \(2yy'-y'+\frac{2x}{1+x^2}=0\). En \((0,0)\): \(-y'=0\Rightarrow f'(0)=0\).`,
+R`<b>Segunda derivada.</b> \(2(y')^2+2yy''-y''+\frac{2(1+x^2)-4x^2}{(1+x^2)^2}=0\).`,
+R`<b>Evaluar.</b> \(0+0-y''+2=0\Rightarrow f''(0)=2\).`]},
+{tema:'Dos veces derivable',enun:R`Pruebe que \(f(x)=\begin{cases}e^{-1/x^2}&x>0\\x^3&x\le0\end{cases}\) es dos veces derivable en \(x=0\).`,
+pista:R`Con \(t=1/h\to\infty\), \(t^ke^{-t^2}\to0\) para cualquier \(k\).`,res:R`\(f'(0)=0\), \(f''(0)=0\).`,
+pasos:[R`<b>\(f'(0)\).</b> Izq: \(\frac{h^3}{h}\to0\). Der: \(\frac{e^{-1/h^2}}{h}=te^{-t^2}\to0\).`,
+R`<b>\(f'\).</b> \(x<0\): \(3x^2\). \(x>0\): \(\frac{2}{x^3}e^{-1/x^2}\). \(f'(0)=0\).`,
+R`<b>\(f''(0)\).</b> Izq: \(\frac{3h^2}{h}\to0\). Der: \(\frac{2e^{-1/h^2}}{h^4}=2t^4e^{-t^2}\to0\). \(f''(0)=0\).`]},
+{tema:'Contar soluciones',enun:R`Determine cuántas soluciones tiene \(6xe^x-2x^3e^x=e^x\).`,
+pista:R`Dividí por \(e^x>0\): queda \(2x^3-6x+1=0\).`,res:R`Tres soluciones: en \((-\infty,-1)\), \((-1,1)\) y \((1,\infty)\).`,
+pasos:[R`<b>Simplificar.</b> \(e^x>0\Rightarrow p(x)=2x^3-6x+1=0\).`,
+R`<b>Monotonía.</b> \(p'=6x^2-6=0\iff x=\pm1\). Crece en \((-\infty,-1)\), decrece en \((-1,1)\), crece en \((1,\infty)\).`,
+R`<b>Valores.</b> \(p(-1)=5>0\), \(p(1)=-3<0\), \(p\to\mp\infty\) en \(\mp\infty\).`,
+R`<b>Conclusión.</b> Un cero en cada tramo de monotonía: tres soluciones.`]}]},
+{id:'r1-2018-nov',corto:'Recuperatorio · nov. 2018',titulo:'Recuperatorio 1er Parcial · 23 de noviembre de 2018',fecha:'Matemática 1 / Análisis I',regla:'Se puede usar L\'Hôpital',ejercicios:[
+{tema:'Extensión derivable',enun:R`Determine para qué \(x_0\notin\text{dom}f\) es posible definir \(f(x_0)\) para que \(f\) sea derivable allí: \(f(x)=x^2\ln|x|+\frac{|x-2|}{x^2-x-2}\).`,
+pista:R`\(x^2-x-2=(x-2)(x+1)\). Analizá \(0\), \(2\), \(-1\).`,res:R`Solo \(x_0=0\) con \(f(0)=-1\); queda \(f'(0)=1\).`,
+pasos:[R`<b>Candidatos.</b> \(0,\ 2,\ -1\).`,
+R`<b>\(x=2\).</b> \(\frac{|x-2|}{(x-2)(x+1)}\to\pm\frac13\): salto, imposible.`,
+R`<b>\(x=-1\).</b> \(\frac{3}{(-3)(x+1)}\to\infty\): imposible.`,
+R`<b>\(x=0\).</b> \(x^2\ln|x|\to0\); segundo término \(=-\frac1{x+1}\) cerca de 0, \(\to-1\). Definir \(f(0)=-1\).`,
+R`<b>Derivada.</b> \(\frac{h^2\ln|h|}{h}=h\ln|h|\to0\) y \(\left(-\frac{1}{x+1}\right)'=\frac1{(x+1)^2}\to1\). \(f'(0)=1\).`]},
+{tema:'Aproximación lineal',enun:R`\(x\) e \(y\) cumplen \(x^3+x+y\cos x+y^3=0\). Aproxime \(y\) para \(x=-0{,}01\).`,
+pista:R`Con \(x=0\): \(y+y^3=0\Rightarrow y=0\).`,res:R`\(y'(0)=-1\), \(y(-0{,}01)\approx0{,}01\).`,
+pasos:[R`<b>Punto.</b> \(y(1+y^2)=0\Rightarrow y=0\).`,
+R`<b>Derivar.</b> \(3x^2+1+y'\cos x-y\sen x+3y^2y'=0\). En \((0,0)\): \(1+y'=0\Rightarrow y'=-1\).`,
+R`<b>Aproximar.</b> \(y(-0{,}01)\approx0+(-1)(-0{,}01)=0{,}01\).`]},
+{tema:'Límite con parámetro',enun:R`Determine los \(k>0\) para los que es finito \(\displaystyle\lim_{x\to+\infty}\left(\frac{2x^2+\sqrt x}{2x^2-1}\right)^{x^k}\).`,
+pista:R`Base − 1 \(\sim\frac{x^{-3/2}}{2}\). Compará con \(x^k\).`,res:R`\(0<k\le\tfrac32\) (vale 1 si \(k<\tfrac32\) y \(e^{1/2}\) si \(k=\tfrac32\)).`,
+pasos:[R`<b>Forma.</b> \(1^\infty\) para todo \(k>0\).`,
+R`<b>Producto.</b> \(\frac{\sqrt x+1}{2x^2-1}x^k\sim\frac{x^{k-3/2}}{2}\).`,
+R`<b>Casos.</b> \(k<\frac32\): \(\to0\), límite \(e^0=1\). \(k=\frac32\): \(\to\frac12\), límite \(\sqrt e\). \(k>\frac32\): \(\to\infty\), límite \(+\infty\).`]},
+ETGC,
+{tema:'Desigualdad con Lagrange',enun:R`Pruebe con Lagrange que para \(1\le a<b\): \(\ln(1+\sqrt b)-\frac b4<\ln(1+\sqrt a)-\frac a4\).`,
+pista:R`Definí \(g(x)=\ln(1+\sqrt x)-\frac x4\) y probá que \(g'<0\) para \(x>1\).`,res:R`\(g'(x)=\frac{1}{2\sqrt x(1+\sqrt x)}-\frac14<0\) en \(x>1\); por Lagrange \(g(b)<g(a)\).`,
+pasos:[R`<b>Auxiliar.</b> \(g(x)=\ln(1+\sqrt x)-\frac x4\). La desigualdad es \(g(b)<g(a)\).`,
+R`<b>Derivada.</b> \(g'(x)=\frac{1}{(1+\sqrt x)2\sqrt x}-\frac14\). Si \(x>1\): \(2\sqrt x(1+\sqrt x)>4\Rightarrow g'(x)<0\).`,
+R`<b>Lagrange.</b> \(g(b)-g(a)=g'(c)(b-a)\), \(c\in(a,b)\), \(c>1\). Como \(g'(c)<0\) y \(b-a>0\): \(g(b)<g(a)\).`]}]},
+{id:'r1-2022-jun',corto:'Recuperatorio · junio 2022 (T1)',titulo:'Recuperatorio 1er Parcial · 23 de junio de 2022 · Tema 1',fecha:'Matemática 1 / Análisis I',regla:SIL,ejercicios:[
+{tema:'Límite 1^∞',enun:R`Sin L'Hôpital: \(\displaystyle\lim_{x\to0}\left[1+\ln^2(1+3x)\right]^{\frac{1}{\cos(4x)-1}}\).`,
+pista:R`\(\ln(1+3x)\sim3x\), \(\cos4x-1\sim-8x^2\).`,res:R`\(e^{-9/8}\)`,
+pasos:[R`<b>Forma.</b> \(1^\infty\).`,
+R`<b>Producto.</b> \(\frac{\ln^2(1+3x)}{\cos4x-1}=\left(\frac{\ln(1+3x)}{3x}\right)^2\cdot\frac{9x^2}{-(1-\cos4x)}\to1\cdot\frac{9}{-8}\).`,
+R`<b>Respuesta.</b> \(e^{-9/8}\).`]},
+{tema:'Continuidad',enun:R`Indique los puntos de continuidad y clasifique las discontinuidades de \(f(x)=x\ln(4|x|)+\frac{\sen(x-1)}{|2x^2-x-1|}\).`,
+pista:R`\(2x^2-x-1=(2x+1)(x-1)\).`,res:R`Continua en \(\mathbb R-\{0,1,-\tfrac12\}\). \(x=0\): evitable (\(-\sen1\)). \(x=1\): salto (\(\ln4\pm\frac13\)). \(x=-\tfrac12\): esencial de 2da especie.`,
+pasos:[R`<b>\(x=0\).</b> \(x\ln(4|x|)=x\ln4+x\ln|x|\to0\). Segundo término \(\to\frac{\sen(-1)}{1}\). <b>Evitable</b>.`,
+R`<b>\(x=1\).</b> \(\frac{\sen(x-1)}{|2x+1||x-1|}\to\pm\frac13\). Primer término \(\to\ln4\). <b>Salto</b>.`,
+R`<b>\(x=-\frac12\).</b> \(\sen(-\frac32)<0\) sobre algo \(\to0^+\): \(-\infty\). <b>Esencial de 2da especie</b>.`]},
+{tema:'Derivada implícita',enun:R`\(f\) derivable cerca de \(4\), \(x^y-y^x=0\), \(f(4)=2\). Halle tangente y normal en \((4,2)\) y aproxime \(f(3{,}9)\).`,
+pista:R`\((x^y)'=x^y\left(y'\ln x+\frac yx\right)\), \((y^x)'=y^x\left(\ln y+\frac{xy'}{y}\right)\).`,
+res:R`\(m=f'(4)=\frac{\ln2-\frac12}{2(\ln2-1)}\approx-0{,}3147\). Tangente \(y=2+m(x-4)\), normal \(y=2-\frac1m(x-4)\). \(f(3{,}9)\approx2{,}0315\).`,
+pasos:[R`<b>Derivar.</b> \(x^y\left(y'\ln x+\frac yx\right)-y^x\left(\ln y+\frac{xy'}{y}\right)=0\).`,
+R`<b>Evaluar en \((4,2)\).</b> \(4^2=2^4=16\): \(16\left(y'\ln4+\frac12\right)-16(\ln2+2y')=0\).`,
+R`<b>Despejar.</b> \(y'(2\ln2-2)=\ln2-\frac12\Rightarrow m=\frac{\ln2-\frac12}{2(\ln2-1)}\approx-0{,}3147\).`,
+R`<b>Rectas y aproximación.</b> Tangente \(y=2+m(x-4)\); normal \(y=2-\frac{1}{m}(x-4)\approx2+3{,}177(x-4)\). \(f(3{,}9)\approx2-0{,}1m\approx2{,}0315\).`]},
+{tema:'Parámetros para derivabilidad',enun:R`Para \(a\neq0\), \(b\in\mathbb R\): \(f(x)=\begin{cases}\frac{\sen(ax)}{x}+bx&x<0\\3-\cos\sqrt x&x\ge0\end{cases}\). Halle \(a,b\) para que \(f\) sea derivable en 0.`,
+pista:R`Continuidad da \(a\). Por derecha: \(\frac{1-\cos\sqrt h}{h}\to\frac12\).`,res:R`\(a=2,\ b=\tfrac12\).`,
+pasos:[R`<b>Continuidad.</b> \(f(0)=2\). Izq: \(\frac{\sen ax}{x}\to a\). Entonces \(a=2\).`,
+R`<b>Derivada derecha.</b> \(\frac{3-\cos\sqrt h-2}{h}=\frac{1-\cos\sqrt h}{(\sqrt h)^2}\to\frac12\).`,
+R`<b>Derivada izquierda.</b> \(\frac{\frac{\sen2h}{h}+bh-2}{h}=\frac{\sen2h-2h}{h^2}+b\to0+b\).`,
+R`<b>Igualar.</b> \(b=\frac12\).`]},
+ETGC]},
+{id:'r1-2022-nov',corto:'Recuperatorio · nov. 2022',titulo:'Recuperatorio 1er Parcial · 23 de noviembre de 2022',fecha:'Matemática 1 / Análisis I',regla:SIL,ejercicios:[
+{tema:'Límite 1^∞',enun:R`Sin L'Hôpital: \(\displaystyle\lim_{x\to0}\left[1+\ln(\cos x)\right]^{\frac1{1-\cos4x}}\).`,
+pista:R`\(\ln(\cos x)=\ln(1+(\cos x-1))\sim\cos x-1\sim-\frac{x^2}2\).`,res:R`\(e^{-1/16}\)`,
+pasos:[R`<b>Forma.</b> \(1^\infty\).`,
+R`<b>Producto.</b> \(\frac{\ln(\cos x)}{1-\cos4x}\sim\frac{-x^2/2}{8x^2}=-\frac1{16}\).`,
+R`<b>Respuesta.</b> \(e^{-1/16}\).`]},
+{tema:'Continuidad',enun:R`Clasifique las discontinuidades de \(f(x)=\frac{|2x^2-x-1|}{e^x-e}+\frac{x-\pi}{\sen x}\).`,
+pista:R`Puntos: \(x=1\) y \(x=k\pi\). En \(x=\pi\) el numerador también se anula.`,
+res:R`\(x=1\): salto (\(\pm\frac3e\) más \(\frac{1-\pi}{\sen1}\)). \(x=\pi\): evitable. \(x=k\pi,\ k\neq1\): esencial de 2da especie.`,
+pasos:[R`<b>\(x=1\).</b> \(\frac{|2x+1||x-1|}{e^x-e}\sim\frac{3|x-1|}{e(x-1)}\to\pm\frac3e\); el otro sumando es continuo. <b>Salto</b>.`,
+R`<b>\(x=\pi\).</b> \(\sen x=-\sen(x-\pi)\): \(\frac{x-\pi}{\sen x}\to-1\). <b>Evitable</b>.`,
+R`<b>\(x=k\pi,\ k\neq1\).</b> Numerador \((k-1)\pi\neq0\), denominador \(\to0\): <b>esencial de 2da especie</b>.`]},
+{tema:'Derivada implícita',enun:R`\(f\) derivable en 0 con \(e^xy^3-\cos(x)y^2+y=1\). Halle tangente y normal en \((0,f(0))\) y aproxime \(f(-0{,}2)\).`,
+pista:R`En \(x=0\): \(y^3-y^2+y-1=(y-1)(y^2+1)\).`,res:R`\(f(0)=1\), \(f'(0)=-\tfrac12\). Tangente \(y=1-\frac x2\); normal \(y=1+2x\); \(f(-0{,}2)\approx1{,}1\).`,
+pasos:[R`<b>\(f(0)\).</b> \((y-1)(y^2+1)=0\Rightarrow y=1\).`,
+R`<b>Derivar.</b> \(e^xy^3+3e^xy^2y'+\sen x\,y^2-2\cos x\,yy'+y'=0\).`,
+R`<b>Evaluar.</b> \(1+3y'-2y'+y'=0\Rightarrow f'(0)=-\frac12\).`,
+R`<b>Rectas.</b> \(y=1-\frac x2\); \(y=1+2x\). \(f(-0{,}2)\approx1{,}1\).`]},
+{tema:'Parámetros',enun:R`\(f(x)=\begin{cases}ax+\frac{\sen2x}{x}&x<0\\\frac{e^{bx}-1}{x}&x>0\end{cases}\). Halle \(a,b\) para que se pueda definir \(f(0)\) y \(f\) resulte derivable. Indique \(f(0)\) y \(f'(0)\).`,
+pista:R`Límites laterales iguales dan \(b\). Para \(a\): \(\frac{e^{2h}-1-2h}{h^2}\to2\).`,res:R`\(b=2\), \(a=2\), \(f(0)=2\), \(f'(0)=2\).`,
+pasos:[R`<b>Continuidad.</b> Izq \(\to2\), der \(\to b\). \(b=2\), \(f(0)=2\).`,
+R`<b>Izquierda.</b> \(\frac{ah+\frac{\sen2h}{h}-2}{h}=a+\frac{\sen2h-2h}{h^2}\to a\).`,
+R`<b>Derecha.</b> \(\frac{e^{2h}-1-2h}{h^2}\to2\) (L'Hôpital o Taylor: \(e^{2h}=1+2h+2h^2+\dots\)).`,
+R`<b>Igualar.</b> \(a=2\), \(f'(0)=2\).`]},
+{tema:'Rectas normales',enun:R`Pruebe que todas las rectas normales al gráfico de \(f(x)=\sqrt{3+2x-x^2}\) contienen al punto \((1,0)\).`,
+pista:R`\(3+2x-x^2=4-(x-1)^2\): es una semicircunferencia de centro \((1,0)\).`,res:R`Para \(a\neq1\) la normal en \(a\) evaluada en \(x=1\) da \(y=0\); en \(a=1\) la normal es \(x=1\).`,
+pasos:[R`<b>Geometría.</b> \(y=\sqrt{4-(x-1)^2}\): semicircunferencia de radio 2 y centro \((1,0)\). Las normales a una circunferencia pasan por su centro.`,
+R`<b>Analítico.</b> \(f'(x)=\frac{1-x}{\sqrt{3+2x-x^2}}\). Para \(a\in(-1,3)\), \(a\neq1\): normal \(y=f(a)-\frac{f(a)}{1-a}(x-a)\).`,
+R`<b>Evaluar en \(x=1\).</b> \(y=f(a)-\frac{f(a)}{1-a}(1-a)=0\) ✓.`,
+R`<b>\(a=1\).</b> \(f'(1)=0\): tangente horizontal, la normal es \(x=1\), que contiene a \((1,0)\).`]}]}
+];
+const P2=[
+{id:'p2-2017-nov',corto:'2do parcial · nov. 2017',titulo:'2do Parcial · 18 de noviembre de 2017',fecha:'Matemática 1 / Análisis I',ejercicios:[
+{tema:'Estudio de función',enun:R`Dada \(f(x)=(x^2-1)e^x\): 1) crecimiento, extremos y concavidad; 2) asíntotas; 3) gráfico aproximado.`,
+pista:R`\(f'=e^x(x^2+2x-1)\), \(f''=e^x(x^2+4x+1)\). Como \(e^x>0\), solo mirás el polinomio.`,
+res:R`Máx. en \(x=-1-\sqrt2\) (\(\approx0{,}432\)); mín. en \(x=-1+\sqrt2\) (\(\approx-1{,}254\)). Inflexiones en \(x=-2\pm\sqrt3\). AH \(y=0\) en \(-\infty\).`,
+pasos:[R`<b>Dominio.</b> \(\mathbb R\). Sin asíntotas verticales.`,
+R`<b>\(f'\).</b> \(e^x(x^2-1)+e^x\cdot2x=e^x(x^2+2x-1)\). Ceros: \(x=-1\pm\sqrt2\). Crece en \((-\infty,-1-\sqrt2)\cup(-1+\sqrt2,\infty)\), decrece entre ellos.`,
+R`<b>Extremos.</b> Máx. local \(f(-1-\sqrt2)=(2+2\sqrt2)e^{-1-\sqrt2}\approx0{,}432\). Mín. \(f(-1+\sqrt2)=(2-2\sqrt2)e^{\sqrt2-1}\approx-1{,}254\) (es mínimo absoluto).`,
+R`<b>\(f''\).</b> \(e^x(x^2+4x+1)\), ceros \(x=-2\pm\sqrt3\approx-3{,}73;\ -0{,}27\). Cóncava hacia arriba fuera de ese intervalo, hacia abajo adentro. Puntos de inflexión \(\approx(-3{,}73;\ 0{,}31)\) y \((-0{,}27;\ -0{,}71)\).`,
+R`<b>Asíntotas.</b> \(\lim_{x\to-\infty}(x^2-1)e^x=0\): AH \(y=0\) en \(-\infty\). En \(+\infty\), \(f/x\to\infty\): sin oblicua.`,
+R`<b>Gráfico.</b> Viene de 0 por arriba, inflexión, máximo pequeño, corta el eje en \(x=-1\), baja al mínimo, corta en \(x=1\) y crece rápido. \(f(0)=-1\).`]},
+{tema:'Taylor y Lagrange',enun:R`Aproxime \(\Ch(0{,}5)\) con un polinomio de Taylor de orden 7. Acote el error con Lagrange e indique si es por exceso o defecto (\(2{,}7<e<2{,}72\)).`,
+pista:R`Mac Laurin de \(\Ch\) solo tiene potencias pares; el resto de orden 7 usa la derivada 8, que es \(\Ch\).`,
+res:R`\(P_7(0{,}5)\approx1{,}1276259\); error \(<1{,}3\cdot10^{-7}\); por defecto.`,
+pasos:[R`<b>Polinomio.</b> \(P_7(x)=1+\frac{x^2}{2}+\frac{x^4}{24}+\frac{x^6}{720}\) (los términos impares son 0).`,
+R`<b>Valor.</b> \(P_7(0{,}5)=1+0{,}125+0{,}0026042+0{,}0000217\approx1{,}1276259\).`,
+R`<b>Resto.</b> \(R_7=\frac{\Ch(c)}{8!}0{,}5^8\), \(c\in(0;0{,}5)\).`,
+R`<b>Cota.</b> \(\Ch c\le\Ch0{,}5<\frac{e^{0{,}5}+1}{2}<\frac{1{,}65+1}{2}<1{,}33\) (pues \(\sqrt{2{,}72}<1{,}65\)). \(|R_7|<\frac{1{,}33}{40320\cdot256}\approx1{,}3\cdot10^{-7}\).`,
+R`<b>Signo.</b> \(R_7>0\): la aproximación es <b>por defecto</b>.`]},
+{tema:'Primitivas',enun:R`Halle todas las primitivas de \(f(x)=\frac{x^2+4}{x^3+x^2-2}+x^3\sqrt{1-x^2}\).`,
+pista:R`\(x=1\) es raíz de \(x^3+x^2-2=(x-1)(x^2+2x+2)\). Para la segunda: \(u=1-x^2\).`,
+res:R`\(\ln|x-1|-2\arctg(x+1)-\frac13(1-x^2)^{3/2}+\frac15(1-x^2)^{5/2}+C\)`,
+pasos:[R`<b>Factorizar.</b> \(x^3+x^2-2=(x-1)(x^2+2x+2)\), con \(x^2+2x+2=(x+1)^2+1\) irreducible.`,
+R`<b>Fracciones.</b> \(\frac{x^2+4}{(x-1)(x^2+2x+2)}=\frac{A}{x-1}+\frac{Bx+C}{x^2+2x+2}\). \(A=\frac55=1\); comparando: \(B=0,\ C=-2\).`,
+R`<b>Integrar.</b> \(\int\frac{dx}{x-1}-2\int\frac{dx}{(x+1)^2+1}=\ln|x-1|-2\arctg(x+1)\).`,
+R`<b>Sustitución.</b> \(u=1-x^2,\ du=-2x\,dx,\ x^2=1-u\): \(\int x^2\sqrt{1-x^2}\,x\,dx=-\frac12\int(1-u)\sqrt u\,du=-\frac13u^{3/2}+\frac15u^{5/2}\).`,
+R`<b>Resultado.</b> \(\ln|x-1|-2\arctg(x+1)-\frac13(1-x^2)^{3/2}+\frac15(1-x^2)^{5/2}+C\), en \((-1,1)\).`]},
+{tema:'TFC',enun:R`Sea \(F(x)=\int_0^{|x|}\frac{1-e^t}{1+t^2}dt\). Pruebe que \(F\) es derivable en \(\mathbb R\) y halle \(F'\).`,
+pista:R`Fuera de 0: TFC y regla de la cadena con \(|x|'=\sgn x\). En 0: cociente incremental.`,
+res:R`\(F'(x)=\sgn(x)\,\frac{1-e^{|x|}}{1+x^2}\) para \(x\neq0\) y \(F'(0)=0\).`,
+pasos:[R`<b>TFC.</b> \(g(t)=\frac{1-e^t}{1+t^2}\) es continua: \(G(u)=\int_0^ug\) es derivable con \(G'=g\). \(F(x)=G(|x|)\).`,
+R`<b>\(x\neq0\).</b> \(|x|\) es derivable: \(F'(x)=g(|x|)\sgn x\).`,
+R`<b>\(x=0\).</b> \(\left|\frac{F(h)}{h}\right|=\frac{|G(|h|)|}{|h|}\to|G'(0)|=|g(0)|=0\). \(F'(0)=0\).`]},
+{tema:'Área entre curvas',enun:R`Región encerrada por \(y+2|x|=2\) y \(x^2-2x+1=y\). 1) Exprese el área como integral en \(x\) y en \(y\). 2) Calcúlela.`,
+pista:R`\(y=2-2|x|\) es un "techo"; \(y=(x-1)^2\). Intersecciones: \(x=1\) y \(x=2-\sqrt5\).`,
+res:R`\(A=\frac{10\sqrt5-20}{3}\approx0{,}787\)`,
+pasos:[R`<b>Intersecciones.</b> \(x\ge0\): \(2-2x=(x-1)^2\Rightarrow x=1\). \(x<0\): \(2+2x=(x-1)^2\Rightarrow x^2-4x-1=0\Rightarrow x=2-\sqrt5\).`,
+R`<b>En \(x\).</b> \(A=\int_{2-\sqrt5}^{0}[(2+2x)-(x-1)^2]dx+\int_0^1[(2-2x)-(x-1)^2]dx\).`,
+R`<b>En \(y\).</b> Con \(b=6-2\sqrt5\): \(A=\int_0^{b}\left[(1-\tfrac y2)-(1-\sqrt y)\right]dy+\int_b^2\left[\tfrac{2-y}{2}-\tfrac{y-2}{2}\right]dy\).`,
+R`<b>Calcular (en \(x\)).</b> \(\int_0^1(1-x^2)dx=\frac23\). \(\int_{a}^0(-x^2+4x+1)dx=\frac{a^3}3-2a^2-a\) con \(a=2-\sqrt5\): da \(\frac{10\sqrt5-22}{3}\).`,
+R`<b>Total.</b> \(A=\frac23+\frac{10\sqrt5-22}{3}=\frac{10\sqrt5-20}{3}\approx0{,}787\).`]}]},
+{id:'p2-2018-jun',corto:'2do parcial · junio 2018',titulo:'2do Parcial · 14 de junio de 2018',fecha:'Matemática 1 / Análisis I (el PDF dice "1er Parcial" en el encabezado, pero es de temas del 2do)',ejercicios:[
+{tema:'Estudio de función',enun:R`Dada \(f(x)=\frac{x^2-1}{x^2-4}\): 1) asíntotas, crecimiento, extremos, concavidad, inflexión. 2) Gráfico e imagen.`,
+pista:R`Escribí \(f=1+\frac{3}{x^2-4}\). Es par.`,
+res:R`AV \(x=\pm2\), AH \(y=1\). Crece en \(x<0\), decrece en \(x>0\); máx. \((0,\tfrac14)\). Sin inflexión. Imagen \((-\infty,\tfrac14]\cup(1,\infty)\).`,
+pasos:[R`<b>Dominio y simetría.</b> \(\mathbb R-\{\pm2\}\), par.`,
+R`<b>Asíntotas.</b> AV \(x=\pm2\) (\(x\to2^+\): \(+\infty\); \(2^-\): \(-\infty\); simétrico en \(-2\)). AH \(y=1\).`,
+R`<b>\(f'\).</b> \(-\frac{6x}{(x^2-4)^2}\): crece en \((-\infty,-2)\cup(-2,0)\), decrece en \((0,2)\cup(2,\infty)\). Máx. local \(f(0)=\frac14\).`,
+R`<b>\(f''\).</b> \(\frac{6(3x^2+4)}{(x^2-4)^3}\): cóncava hacia arriba si \(|x|>2\), hacia abajo si \(|x|<2\). No hay inflexión (el cambio es en puntos fuera del dominio).`,
+R`<b>Imagen.</b> Si \(|x|>2\): \(\frac3{x^2-4}\in(0,\infty)\Rightarrow f\in(1,\infty)\). Si \(|x|<2\): \(\frac3{x^2-4}\in(-\infty,-\frac34]\Rightarrow f\in(-\infty,\frac14]\).`]},
+{tema:'Taylor',enun:R`Calcule \(\ln(1{,}3)\) con error menor que \(10^{-4}\) usando Taylor. ¿Exceso o defecto?`,
+pista:R`\(\ln(1+x)\) con \(x=0{,}3\). \(|R_n|\le\frac{0{,}3^{n+1}}{n+1}\).`,res:R`\(n=6\): \(\ln1{,}3\approx0{,}2623395\), por defecto.`,
+pasos:[R`<b>Resto.</b> \(f^{(k)}(x)=\frac{(-1)^{k-1}(k-1)!}{(1+x)^k}\Rightarrow R_n=\frac{(-1)^n}{(n+1)(1+c)^{n+1}}x^{n+1}\), \(c\in(0;0{,}3)\).`,
+R`<b>Cota.</b> \((1+c)>1\Rightarrow|R_n|<\frac{0{,}3^{n+1}}{n+1}\). \(n=5\): \(1{,}2\cdot10^{-4}\) ✗. \(n=6\): \(3{,}1\cdot10^{-5}\) ✓.`,
+R`<b>Valor.</b> \(P_6(0{,}3)=0{,}3-0{,}045+0{,}009-0{,}002025+0{,}000486-0{,}0001215=0{,}2623395\).`,
+R`<b>Signo.</b> \(R_6=\frac{x^7}{7(1+c)^7}>0\): <b>por defecto</b>.`]},
+{tema:'Primitivas',enun:R`Calcule \(\int\left[\frac{x}{\sqrt{x^2+2x+2}}+\frac{x+7}{x^2+x-2}\right]dx\). Pista: \(\int(1+x^2)^{-1/2}dx=\ln|x+\sqrt{1+x^2}|+c\).`,
+pista:R`Completá cuadrados: \((x+1)^2+1\) y escribí \(x=(x+1)-1\).`,
+res:R`\(\sqrt{x^2+2x+2}-\ln\left|x+1+\sqrt{x^2+2x+2}\right|+\frac83\ln|x-1|-\frac53\ln|x+2|+C\)`,
+pasos:[R`<b>Primera.</b> \(\int\frac{(x+1)}{\sqrt{(x+1)^2+1}}dx-\int\frac{dx}{\sqrt{(x+1)^2+1}}=\sqrt{x^2+2x+2}-\ln|x+1+\sqrt{x^2+2x+2}|\).`,
+R`<b>Segunda.</b> \(\frac{x+7}{(x-1)(x+2)}=\frac{8/3}{x-1}-\frac{5/3}{x+2}\).`,
+R`<b>Resultado.</b> Sumar ambas y \(+C\).`]},
+{tema:'Área',enun:R`Grafique la región del primer cuadrante encerrada por \(x^2+y^2=1\), \(y=x\), \(y=0\) y calcule su área con integrales.`,
+pista:R`Partí en \(x=\frac{\sqrt2}{2}\): antes el techo es la recta, después la circunferencia. O integrá en \(y\).`,res:R`\(\frac\pi8\)`,
+pasos:[R`<b>Región.</b> Sector circular entre los ángulos 0 y \(\frac\pi4\).`,
+R`<b>Integral en \(y\).</b> \(A=\int_0^{\sqrt2/2}\left(\sqrt{1-y^2}-y\right)dy\).`,
+R`<b>Primitiva.</b> \(\int\sqrt{1-y^2}dy=\frac{y\sqrt{1-y^2}+\arcsen y}{2}\).`,
+R`<b>Evaluar.</b> \(\frac{\frac12+\frac\pi4}{2}-\frac14=\frac\pi8\). Coincide con el área del sector \(\frac12\cdot\frac\pi4\).`]},
+{tema:'Desigualdad con Lagrange',enun:R`Pruebe que para \(n\ge2\) y \(a\ge1\): \(\sqrt[n]{1+a}-\sqrt[n]a<\frac1n\).`,
+pista:R`Lagrange para \(g(t)=t^{1/n}\) en \([a,a+1]\).`,res:R`\(=\frac1nc^{\frac1n-1}<\frac1n\) porque \(c>1\) y el exponente es negativo.`,
+pasos:[R`<b>Lagrange.</b> \(g(t)=t^{1/n}\) continua y derivable en \(t>0\): \(g(a+1)-g(a)=g'(c)\cdot1=\frac1nc^{\frac1n-1}\), \(c\in(a,a+1)\).`,
+R`<b>Acotar.</b> \(c>a\ge1\) y \(\frac1n-1<0\Rightarrow c^{\frac1n-1}<1\).`,
+R`<b>Conclusión.</b> \(\sqrt[n]{1+a}-\sqrt[n]a<\frac1n\).`]}]},
+{id:'p2-2018-nov',corto:'2do parcial · nov. 2018',titulo:'2do Parcial · 14 de noviembre de 2018',fecha:'Matemática 1 / Análisis I',ejercicios:[
+{tema:'Estudio de función',enun:R`Dada \(f(x)=(x+2)e^{1/x}\): 1) asíntotas, crecimiento, extremos, concavidad e inflexión. 2) Gráfico e imagen.`,
+pista:R`\(f'=e^{1/x}\frac{(x-2)(x+1)}{x^2}\), \(f''=e^{1/x}\frac{5x+2}{x^4}\). Oblicua: \(\lim x(e^{1/x}-1)=1\).`,
+res:R`AV \(x=0\) (por derecha), AO \(y=x+3\). Máx. \((-1,\tfrac1e)\), mín. \((2,4\sqrt e)\). Inflexión en \(x=-\tfrac25\). Imagen \((-\infty,\tfrac1e]\cup[4\sqrt e,\infty)\).`,
+pasos:[R`<b>Asíntotas.</b> \(x\to0^+\): \(f\to+\infty\) (AV). \(x\to0^-\): \(f\to0\). \(m=\lim(1+\frac2x)e^{1/x}=1\); \(b=\lim[x(e^{1/x}-1)+2e^{1/x}]=1+2=3\). AO \(y=x+3\).`,
+R`<b>\(f'\).</b> \(e^{1/x}\left(1-\frac{x+2}{x^2}\right)=e^{1/x}\frac{(x-2)(x+1)}{x^2}\). Crece en \((-\infty,-1)\) y \((2,\infty)\); decrece en \((-1,0)\) y \((0,2)\).`,
+R`<b>Extremos.</b> Máx. \(f(-1)=e^{-1}\). Mín. \(f(2)=4e^{1/2}\approx6{,}59\).`,
+R`<b>\(f''\).</b> \(e^{1/x}\frac{5x+2}{x^4}\): cóncava hacia abajo en \(x<-\frac25\), hacia arriba en \((-\frac25,0)\) y \((0,\infty)\). Inflexión \(\left(-\frac25,\frac85e^{-5/2}\right)\approx(-0{,}4;\ 0{,}13)\).`,
+R`<b>Imagen.</b> En \(x<0\): de \(-\infty\) sube a \(\frac1e\) y baja a 0: \((-\infty,\frac1e]\). En \(x>0\): \([4\sqrt e,\infty)\).`]},
+{tema:'Taylor (desigualdad)',enun:R`Pruebe que para todo \(n\in\mathbb N_0\): \(\Ch x\ge\sum_{k=0}^n\frac{x^{2k}}{(2k)!}\) para todo \(x\in\mathbb R\).`,
+pista:R`La suma es el polinomio de Mac Laurin de orden \(2n+1\). Mirá el signo del resto.`,res:R`\(R_{2n+1}=\frac{\Ch(c)}{(2n+2)!}x^{2n+2}\ge0\).`,
+pasos:[R`<b>Polinomio.</b> \(\Ch^{(k)}(0)\) vale 1 si \(k\) es par y 0 si es impar: \(P_{2n+1}=\sum_{k=0}^n\frac{x^{2k}}{(2k)!}\).`,
+R`<b>Resto de Lagrange.</b> \(R_{2n+1}(x)=\frac{\Ch^{(2n+2)}(c)}{(2n+2)!}x^{2n+2}=\frac{\Ch c}{(2n+2)!}x^{2n+2}\).`,
+R`<b>Signo.</b> \(\Ch c>0\) y \(x^{2n+2}\ge0\Rightarrow R\ge0\Rightarrow\Ch x\ge P_{2n+1}(x)\).`]},
+{tema:'Primitivas (partes)',enun:R`Halle todas las primitivas de \(f(x)=2x\ln(x^2-x-2)\).`,
+pista:R`Partes con \(u=\ln(x^2-x-2)\), \(dv=2x\,dx\). Después división de polinomios y fracciones simples.`,
+res:R`\(x^2\ln(x^2-x-2)-x^2-x-4\ln|x-2|-\ln|x+1|+C\)`,
+pasos:[R`<b>Partes.</b> \(=x^2\ln(x^2-x-2)-\int\frac{x^2(2x-1)}{x^2-x-2}dx\).`,
+R`<b>División.</b> \(\frac{2x^3-x^2}{x^2-x-2}=2x+1+\frac{5x+2}{(x-2)(x+1)}\).`,
+R`<b>Fracciones.</b> \(\frac{5x+2}{(x-2)(x+1)}=\frac4{x-2}+\frac1{x+1}\).`,
+R`<b>Resultado.</b> \(x^2\ln(x^2-x-2)-x^2-x-4\ln|x-2|-\ln|x+1|+C\) (dominio \(x<-1\) o \(x>2\)).`]},
+{tema:'Área',enun:R`Región del primer cuadrante encerrada por \(x^2+y^2=1\), \(y-x=0\), \(x-\sqrt3y=0\). Grafique y calcule el área.`,
+pista:R`Rectas a 45° y a 30°. Integrá en \(y\) partiendo en \(y=\frac12\).`,res:R`\(\frac{\pi}{24}\)`,
+pasos:[R`<b>Puntos.</b> \(y=x\) corta la circunferencia en \((\frac{\sqrt2}2,\frac{\sqrt2}2)\); \(x=\sqrt3y\) en \((\frac{\sqrt3}2,\frac12)\).`,
+R`<b>Integral.</b> \(A=\int_0^{1/2}(\sqrt3y-y)dy+\int_{1/2}^{\sqrt2/2}(\sqrt{1-y^2}-y)dy\).`,
+R`<b>Calcular.</b> Primera: \(\frac{\sqrt3-1}{8}\). Segunda: \(\frac\pi{24}+\frac{1-\sqrt3}{8}\).`,
+R`<b>Total.</b> \(\frac\pi{24}\), igual que el sector \(\frac12(\frac\pi4-\frac\pi6)\).`]},
+{tema:'TFC y extremos',enun:R`Pruebe que \(f(x)=x\int_{-x}^{x}e^{-t^2/2}dt\) tiene un mínimo relativo en \(x=0\).`,
+pista:R`\(G(x)=\int_{-x}^xe^{-t^2/2}dt\) es impar y tiene el signo de \(x\).`,res:R`\(f(x)>0=f(0)\) para \(x\neq0\); además \(f'(0)=0\), \(f''(0)=4>0\).`,
+pasos:[R`<b>Signo.</b> Si \(x>0\), \(G(x)>0\) (integrando positivo). Si \(x<0\), \(G(x)<0\). Entonces \(f(x)=xG(x)>0\) si \(x\neq0\), y \(f(0)=0\).`,
+R`<b>Conclusión directa.</b> \(f(0)\) es mínimo (incluso absoluto).`,
+R`<b>Con derivadas.</b> \(G'(x)=2e^{-x^2/2}\). \(f'=G+xG'\), \(f'(0)=0\). \(f''=2G'+xG''\), \(f''(0)=4>0\).`]}]},
+{id:'p2-2019-jun',corto:'2do parcial · junio 2019',titulo:'2do Parcial · 15 de junio de 2019',fecha:'Matemática 1 / Análisis I',ejercicios:[
+{tema:'Estudio de función',enun:R`Dada \(f(x)=\frac{e^{1/x}}{x}+1\): 1) crecimiento, extremos, concavidad. 2) Asíntotas. 3) Gráfico.`,
+pista:R`\(f'=-\frac{e^{1/x}(x+1)}{x^3}\), \(f''=\frac{e^{1/x}(2x^2+4x+1)}{x^5}\). Para \(x\to0^-\) usá \(t=1/x\to-\infty\).`,
+res:R`Decrece en \((-\infty,-1)\) y \((0,\infty)\), crece en \((-1,0)\). Mín. \((-1,1-\tfrac1e)\). Inflexión en \(x=-1\pm\tfrac{\sqrt2}2\). AV \(x=0\) (por derecha), AH \(y=1\).`,
+pasos:[R`<b>\(f'\).</b> \(\frac{e^{1/x}(-\frac1{x^2})x-e^{1/x}}{x^2}=-\frac{e^{1/x}(x+1)}{x^3}\). Signo de \(-\frac{x+1}{x^3}\).`,
+R`<b>Tabla.</b> \(x<-1\): \(f'<0\). \(-1<x<0\): \(f'>0\). \(x>0\): \(f'<0\). Mín. local \(f(-1)=1-\frac1e\).`,
+R`<b>\(f''\).</b> \(\frac{e^{1/x}(2x^2+4x+1)}{x^5}\). Ceros \(-1\pm\frac{\sqrt2}2\approx-1{,}71;\ -0{,}29\). Abajo en \(x<-1{,}71\), arriba en \((-1{,}71;-0{,}29)\), abajo en \((-0{,}29;0)\), arriba en \(x>0\).`,
+R`<b>Asíntotas.</b> \(x\to0^+\): \(+\infty\) (AV). \(x\to0^-\): \(te^{t}\to0\), \(f\to1\). \(x\to\pm\infty\): \(f\to1\), AH \(y=1\).`,
+R`<b>Gráfico.</b> Desde \(y=1\) por abajo en \(-\infty\), baja al mínimo \((-1;0{,}63)\), sube a 1 en \(0^-\); en \(x>0\) baja desde \(+\infty\) hacia \(y=1\).`]},
+{tema:'Taylor',enun:R`Calcule \(\ln(0{,}9)\) con error menor a \(10^{-2}\) con un polinomio de Taylor. ¿Exceso o defecto?`,
+pista:R`\(x=-0{,}1\). Ahora \(c\in(-0{,}1;0)\), así que \(1+c>0{,}9\).`,res:R`\(n=1\): \(\ln0{,}9\approx-0{,}1\), por exceso (con \(n=2\): \(-0{,}105\), también por exceso).`,
+pasos:[R`<b>Resto.</b> \(|R_n|=\frac{|x|^{n+1}}{(n+1)(1+c)^{n+1}}<\frac{0{,}1^{n+1}}{(n+1)0{,}9^{n+1}}\).`,
+R`<b>Elegir \(n\).</b> \(n=1\): \(\frac{0{,}01}{2\cdot0{,}81}\approx0{,}0062<0{,}01\) ✓.`,
+R`<b>Valor.</b> \(P_1(-0{,}1)=-0{,}1\).`,
+R`<b>Signo.</b> \(R_1=\frac{f''(c)}{2}x^2=-\frac{x^2}{2(1+c)^2}<0\): el valor real es menor, aproximación <b>por exceso</b>.`]},
+{tema:'Primitivas',enun:R`Calcule \(\int\left[\frac{x^5}{\sqrt{1-x^2}}+\frac{5x^2-36x+48}{x^3-8x^2+16x}\right]dx\).`,
+pista:R`\(u=1-x^2\) con \(x^4=(1-u)^2\). \(x^3-8x^2+16x=x(x-4)^2\): raíz doble.`,
+res:R`\(-\sqrt{1-x^2}+\frac23(1-x^2)^{3/2}-\frac15(1-x^2)^{5/2}+3\ln|x|+2\ln|x-4|+\frac4{x-4}+C\)`,
+pasos:[R`<b>Primera.</b> \(u=1-x^2\): \(-\frac12\int\frac{(1-u)^2}{\sqrt u}du=-u^{1/2}+\frac23u^{3/2}-\frac15u^{5/2}\).`,
+R`<b>Fracciones.</b> \(\frac{5x^2-36x+48}{x(x-4)^2}=\frac Ax+\frac B{x-4}+\frac C{(x-4)^2}\): \(A=3\), \(C=-4\), \(B=5-A=2\).`,
+R`<b>Integrar.</b> \(3\ln|x|+2\ln|x-4|+\frac{4}{x-4}\).`,
+R`<b>Resultado.</b> Sumar y \(+C\).`]},
+{tema:'TFC',enun:R`Sea \(f(x)=\int_{x-1}^{x+1}\frac{dt}{\sqrt{1+t^2}}\). Justifique la derivabilidad, halle crecimiento y extremos absolutos.`,
+pista:R`\(f'(x)=g(x+1)-g(x-1)\). Compará \((x+1)^2\) con \((x-1)^2\).`,
+res:R`Crece en \((-\infty,0)\), decrece en \((0,\infty)\). Máximo absoluto \(f(0)=2\ln(1+\sqrt2)\approx1{,}763\). No hay mínimo absoluto (\(f\to0\)).`,
+pasos:[R`<b>Derivabilidad.</b> \(g(t)=\frac1{\sqrt{1+t^2}}\) continua; por TFC y regla de la cadena \(f'(x)=\frac1{\sqrt{1+(x+1)^2}}-\frac1{\sqrt{1+(x-1)^2}}\).`,
+R`<b>Signo.</b> \(f'>0\iff(x+1)^2<(x-1)^2\iff4x<0\iff x<0\).`,
+R`<b>Máximo.</b> \(f(0)=\int_{-1}^1\frac{dt}{\sqrt{1+t^2}}=2\ln(1+\sqrt2)\).`,
+R`<b>Mínimo.</b> \(f>0\) y \(\lim_{x\to\pm\infty}f=0\) (integrando chico en un intervalo de largo 2): ínfimo 0, no alcanzado.`]},
+{tema:'Área',enun:R`Calcule el área de la región limitada por \(y-x^2=0\) y \(|y|+x=0\).`,
+pista:R`\(|y|=-x\) son dos semirrectas en \(x\le0\): \(y=-x\) e \(y=x\). La parábola solo toca la de arriba.`,res:R`\(\frac16\)`,
+pasos:[R`<b>Curvas.</b> \(|y|+x=0\iff x\le0,\ y=\pm x\).`,
+R`<b>Intersección.</b> \(y=x^2\ge0\), con \(y=-x\): \(x^2=-x\Rightarrow x=0,-1\).`,
+R`<b>Área.</b> \(\int_{-1}^0(-x-x^2)dx=\left[-\frac{x^2}2-\frac{x^3}3\right]_{-1}^0=\frac12-\frac13=\frac16\).`]}]},
+{id:'p2-2024-nov',corto:'2do parcial · nov. 2024',titulo:'2do Parcial · 11 de noviembre de 2024',fecha:'Análisis Matemático 1',ejercicios:[
+{tema:'Estudio de función',enun:R`Dada \(f(x)=xe^{-1/x^2}\): 1) asíntotas; 2) crecimiento, extremos, concavidad, inflexión; 3) gráfico.`,
+pista:R`Es impar. \(f'=e^{-1/x^2}(1+\frac2{x^2})>0\). Oblicua: \(e^{u}-1\sim u\).`,
+res:R`AO \(y=x\) en \(\pm\infty\), sin AV. Siempre creciente, sin extremos. Inflexiones en \(x=\pm\sqrt2\).`,
+pasos:[R`<b>Dominio.</b> \(\mathbb R-\{0\}\), \(f\to0\) en 0 (no hay AV). Impar.`,
+R`<b>Oblicua.</b> \(m=\lim e^{-1/x^2}=1\). \(b=\lim x(e^{-1/x^2}-1)=\lim x\cdot(-\frac1{x^2})=0\). \(y=x\).`,
+R`<b>\(f'\).</b> \(e^{-1/x^2}\left(1+\frac{2}{x^2}\right)>0\): creciente en \((-\infty,0)\) y \((0,\infty)\); sin extremos.`,
+R`<b>\(f''\).</b> \(2e^{-1/x^2}\frac{2-x^2}{x^5}\). Arriba en \(x<-\sqrt2\) y \((0,\sqrt2)\); abajo en \((-\sqrt2,0)\) y \(x>\sqrt2\). Inflexión \((\pm\sqrt2,\pm\sqrt2e^{-1/2})\approx(\pm1{,}41;\pm0{,}86)\).`,
+R`<b>Gráfico.</b> Muy plana cerca de 0, se despega y se pega a \(y=x\): por debajo para \(x>0\), por encima para \(x<0\).`]},
+{tema:'Taylor',enun:R`El polinomio de Taylor de orden 2 de \(f\) centrado en \(a=-1\) es \(P_2(x)=1-2(x+1)+(x+1)^2\). Halle el de orden 2 de \(g(x)=xf(2x)-x+x^2\) centrado en \(b=-\frac12\).`,
+pista:R`Leé \(f(-1)=1\), \(f'(-1)=-2\), \(f''(-1)=2\). Notá que \(2b=-1\).`,res:R`\(Q_2(x)=\frac14+(x+\frac12)-5(x+\frac12)^2\)`,
+pasos:[R`<b>Datos.</b> \(f(-1)=1\), \(f'(-1)=-2\), \(\frac{f''(-1)}2=1\Rightarrow f''(-1)=2\).`,
+R`<b>\(g(-\frac12)\).</b> \(-\frac12\cdot1+\frac12+\frac14=\frac14\).`,
+R`<b>\(g'\).</b> \(f(2x)+2xf'(2x)-1+2x\). En \(-\frac12\): \(1+2-1-1=1\).`,
+R`<b>\(g''\).</b> \(4f'(2x)+4xf''(2x)+2\). En \(-\frac12\): \(-8-4+2=-10\).`,
+R`<b>Polinomio.</b> \(\frac14+(x+\frac12)-\frac{10}{2}(x+\frac12)^2\).`]},
+{tema:'Primitivas',enun:R`Calcule \(\int\ln(x+\sqrt x-2)\,dx\).`,
+pista:R`Partes y después \(t=\sqrt x\). O más corto: \(x+\sqrt x-2=(\sqrt x-1)(\sqrt x+2)\).`,
+res:R`\(x\ln(x+\sqrt x-2)-x+\sqrt x-\ln(\sqrt x-1)-4\ln(\sqrt x+2)+C\), \(x>1\).`,
+pasos:[R`<b>Dominio.</b> \((\sqrt x-1)(\sqrt x+2)>0\iff x>1\).`,
+R`<b>Partes.</b> \(=x\ln(\dots)-\int\frac{x\left(1+\frac1{2\sqrt x}\right)}{x+\sqrt x-2}dx\).`,
+R`<b>Sustitución \(t=\sqrt x\).</b> \(dx=2t\,dt\): la integral queda \(\int\frac{t^2(2t+1)}{t^2+t-2}dt\).`,
+R`<b>División.</b> \(\frac{2t^3+t^2}{t^2+t-2}=2t-1+\frac{5t-2}{(t-1)(t+2)}=2t-1+\frac1{t-1}+\frac4{t+2}\). Integral: \(t^2-t+\ln|t-1|+4\ln|t+2|\).`,
+R`<b>Resultado.</b> \(x\ln(x+\sqrt x-2)-x+\sqrt x-\ln(\sqrt x-1)-4\ln(\sqrt x+2)+C\).`]},
+{tema:'TFC + L’Hôpital',enun:R`Calcule \(\displaystyle\lim_{x\to0^+}\frac{\int_x^{x^2}t\ln(1+\sqrt t)\,dt}{\int_0^{x^2}\arcsen(\sqrt[4]t)\,dt}\). Justifique.`,
+pista:R`Ambas integrales \(\to0\): L'Hôpital. Derivá con TFC (límite superior \(x^2\), inferior \(x\)). \((x^2)^{1/4}=\sqrt x\).`,res:R`\(-\frac12\)`,
+pasos:[R`<b>Indeterminación.</b> Integrandos continuos en \([0,1)\) y los intervalos se achican a un punto: \(0/0\).`,
+R`<b>Derivar (TFC).</b> Num: \(x^2\ln(1+x)\cdot2x-x\ln(1+\sqrt x)\). Den: \(\arcsen(\sqrt x)\cdot2x\).`,
+R`<b>Simplificar.</b> \(\frac{2x^2\ln(1+x)-\ln(1+\sqrt x)}{2\arcsen\sqrt x}\).`,
+R`<b>Equivalentes.</b> \(\ln(1+\sqrt x)\sim\sqrt x\), \(\arcsen\sqrt x\sim\sqrt x\), \(2x^2\ln(1+x)\sim2x^3=o(\sqrt x)\). Límite \(\frac{-\sqrt x}{2\sqrt x}=-\frac12\).`]},
+{tema:'Extremos absolutos',enun:R`Encuentre constantes \(m,M\) tales que \(m\le x^3e^{-x^2}\le M\) para todo \(x\in\mathbb R\).`,
+pista:R`\(g'=x^2e^{-x^2}(3-2x^2)\). Es impar y tiende a 0 en \(\pm\infty\).`,
+res:R`\(M=\left(\tfrac32\right)^{3/2}e^{-3/2}\approx0{,}41\), \(m=-M\) (sirve cualquier \(m\le-0{,}41\), \(M\ge0{,}41\)).`,
+pasos:[R`<b>Derivada.</b> \(g'(x)=e^{-x^2}(3x^2-2x^4)=x^2e^{-x^2}(3-2x^2)\). Ceros: \(0,\pm\sqrt{3/2}\).`,
+R`<b>Monotonía.</b> Crece en \((-\sqrt{3/2},\sqrt{3/2})\), decrece fuera. \(\lim_{\pm\infty}g=0\).`,
+R`<b>Extremos absolutos.</b> \(g(\sqrt{3/2})=(\frac32)^{3/2}e^{-3/2}\approx0{,}41\) es el máximo; por imparidad el mínimo es \(-0{,}41\).`,
+R`<b>Respuesta.</b> \(m=-(\frac32)^{3/2}e^{-3/2}\), \(M=(\frac32)^{3/2}e^{-3/2}\).`]}]}
+];
+
+</script>
+<script>
+{
+const fx=v=>v.replace(/\\\((.*?)\\\)|\\\[(.*?)\\\]/gs,m=>m.replace(/</g,'\\lt ').replace(/>/g,'\\gt '));
+const ALL=[MODELO,...P1,...REC,...P2];
+ALL.forEach(x=>{if(x.intro)x.intro=fx(x.intro);x.ejercicios.forEach(e=>{e.enun=fx(e.enun);e.pista=fx(e.pista);e.res=fx(e.res);e.pasos=e.pasos.map(fx)})});
+const groups=[["Empezá acá",[MODELO]],["Primeros parciales",P1],["Recuperatorios del 1er parcial",REC],["Segundos parciales",P2]];
+let store={};try{store=JSON.parse(localStorage.getItem('an1done')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('an1done',JSON.stringify(store))}catch(e){}};
+const nav=document.getElementById('nav'),main=document.getElementById('main');
+const doneCount=ex=>ex.ejercicios.filter((_,i)=>store[ex.id+'_'+i]).length;
+function renderNav(cur){
+  nav.innerHTML='<button data-id="inicio" class="'+(cur==='inicio'?'on':'')+'">Inicio<span class="cnt"></span></button>'+groups.map(([g,list])=>'<h3>'+g+'</h3>'+list.map(ex=>'<button data-id="'+ex.id+'" class="'+(cur===ex.id?'on':'')+'"><span>'+ex.corto+'</span><span class="cnt">'+(ex.id==='modelo'?'guía':doneCount(ex)+'/'+ex.ejercicios.length)+'</span></button>').join('')).join('');
+}
+function typeset(el){
+  const go=()=>{if(window.MathJax&&MathJax.typesetPromise){MathJax.typesetClear&&MathJax.typesetClear([el]);MathJax.typesetPromise([el]).catch(()=>{})}else setTimeout(go,200)};go();
+}
+function home(){
+  main.innerHTML='<div class="home"><div class="exhead"><h2>¿Por dónde empiezo?</h2><p class="meta">Recomendado: leé primero el modelo genérico, después hacé los parciales en orden, primero sin mirar la solución.</p></div>'+
+  groups.map(([g,list])=>'<h3 style="font:700 20px/1.3 \'Source Serif 4\',serif;margin:26px 0 10px">'+g+'</h3><div class="grid2">'+list.map(ex=>'<button class="tile" data-id="'+ex.id+'"><b>'+ex.corto+'</b><span>'+ex.fecha+' · '+(ex.id==='modelo'?'cómo encarar cada punto':doneCount(ex)+' de '+ex.ejercicios.length+' resueltos')+'</span></button>').join('')+'</div>').join('')+'</div>';
+}
+function exCard(ex,i,e){
+  const k=ex.id+'_'+i,d=store[k];
+  return '<section class="card'+(d?' done':'')+'" id="'+k+'"><h3>Ejercicio '+(i+1)+(e.tema?' <span class="tag">'+e.tema+'</span>':'')+' <span class="tag st">'+(d?'Resuelto ✓':'Pendiente')+'</span></h3>'+
+  '<div class="enun mj">'+e.enun+'</div>'+
+  '<div class="btns"><button class="b pri" data-act="yo" data-k="'+k+'">Resolverlo yo</button><button class="b" data-act="paso" data-k="'+k+'">Ver solución paso a paso</button><button class="b" data-act="ok" data-k="'+k+'">'+(d?'Desmarcar':'Marcar como resuelto')+'</button></div>'+
+  '<div class="panel yo" hidden><label for="t_'+k+'" style="display:block;margin-bottom:6px;color:var(--soft)">Borrador (queda guardado en este navegador)</label><textarea id="t_'+k+'" data-k="'+k+'"></textarea><div class="btns"><button class="b" data-act="pista" data-k="'+k+'">Mostrar pista</button><button class="b" data-act="resu" data-k="'+k+'">Comparar con el resultado final</button></div><div class="hint mj" hidden><b>Pista:</b> '+e.pista+'</div><div class="res mj" hidden><b>Resultado:</b> '+e.res+'</div></div>'+
+  '<div class="panel paso" hidden><ol class="steps mj">'+e.pasos.map((p,j)=>'<li class="'+(j>0?'hid':'')+'">'+p+'</li>').join('')+'</ol><div class="btns"><button class="b pri" data-act="sig" data-k="'+k+'">Siguiente paso</button><button class="b" data-act="todo" data-k="'+k+'">Mostrar todos los pasos</button></div><div class="res mj"><b>Resultado:</b> '+e.res+'</div></div></section>';
+}
+function show(id){
+  renderNav(id);
+  if(id==='inicio'||!ALL.find(x=>x.id===id)){home();typeset(main);window.scrollTo(0,0);return}
+  const ex=ALL.find(x=>x.id===id);
+  if(ex.id==='modelo'){main.innerHTML='<div class="exhead"><h2>'+ex.titulo+'</h2><p class="meta">'+ex.fecha+'</p></div><div class="gen mj">'+ex.intro+'</div>'+ex.ejercicios.map((e,i)=>exCard(ex,i,e)).join('');}
+  else{const n=doneCount(ex),tot=ex.ejercicios.length;
+  main.innerHTML='<div class="exhead"><h2>'+ex.titulo+'</h2><p class="meta">'+ex.fecha+'</p>'+(ex.regla?'<span class="rule">'+ex.regla+'</span>':'')+'<div class="prog" aria-label="progreso"><i style="width:'+(100*n/tot)+'%"></i></div></div>'+ex.ejercicios.map((e,i)=>exCard(ex,i,e)).join('');}
+  main.querySelectorAll('textarea').forEach(t=>{try{t.value=localStorage.getItem('an1d_'+t.dataset.k)||''}catch(e){}});
+  typeset(main);window.scrollTo(0,0);
+}
+function route(){const h=location.hash.slice(1)||'inicio';show(h)}
+nav.addEventListener('click',ev=>{const b=ev.target.closest('button[data-id]');if(!b)return;location.hash=b.dataset.id;nav.classList.remove('open')});
+main.addEventListener('click',ev=>{
+  const t=ev.target.closest('.tile');if(t){location.hash=t.dataset.id;return}
+  const b=ev.target.closest('button[data-act]');if(!b)return;
+  const card=document.getElementById(b.dataset.k),a=b.dataset.act;
+  if(a==='yo'){const p=card.querySelector('.yo');p.hidden=!p.hidden;card.querySelector('.paso').hidden=true}
+  if(a==='paso'){const p=card.querySelector('.paso');p.hidden=!p.hidden;card.querySelector('.yo').hidden=true}
+  if(a==='pista')card.querySelector('.hint').hidden=false;
+  if(a==='resu')card.querySelector('.yo .res').hidden=false;
+  if(a==='sig'){const h=card.querySelector('li.hid');if(h){h.classList.remove('hid')}if(!card.querySelector('li.hid'))b.textContent='Todos los pasos visibles'}
+  if(a==='todo'){card.querySelectorAll('li.hid').forEach(l=>l.classList.remove('hid'))}
+  if(a==='ok'){const k=b.dataset.k;if(store[k])delete store[k];else store[k]=1;save();const y=window.scrollY;show(location.hash.slice(1)||'inicio');window.scrollTo(0,y)}
+});
+main.addEventListener('input',ev=>{const t=ev.target;if(t.tagName==='TEXTAREA'){try{localStorage.setItem('an1d_'+t.dataset.k,t.value)}catch(e){}}});
+const mb=document.getElementById('menuBtn');mb.addEventListener('click',()=>{nav.classList.toggle('open');mb.setAttribute('aria-expanded',nav.classList.contains('open'))});
+window.addEventListener('hashchange',route);
+route();
+document.getElementById('mjs').addEventListener('load',()=>typeset(main));
+}
+</script>
+</body>
+</html>
